@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.bos'
+
+def buildVersion = project.findProperty("buildVersion") ?: "0.0.0"
+
+version "${buildVersion}"
+project.buildDir = './bin'
+
+mainClassName = "cli.Admin"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'info.picocli:picocli:4.6.3'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4.1'
+    implementation 'org.slf4j:slf4j-nop:2.0.9'
+}
+
+
+jar {
+    doFirst {
+        manifest {
+            attributes 'Main-Class': 'cli.Admin'
+            attributes 'Specification-Title': 'User Task Manager Admin'
+            attributes 'Specification-Version': "${buildVersion}"
+        }
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

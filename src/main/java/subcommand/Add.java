@@ -38,6 +38,9 @@ public class Add implements Callable<Integer> {
         String username = System.getProperty("user.name");
         String workingDir = System.getProperty("user.dir");
 
+//        srun -c2 --mem=20G xa -c xa_cmd_file -i PVT_sfg_sigrcmin_0p8250v_0p6750v_m40c_NM-C1_D1_L1_MCS00_MCS+
+        int cpu = 0;
+
         JsonObject body = new JsonObject();
         body.addProperty("user", username);
         body.addProperty("license_type", Global.getInstance().getLicenseType());
@@ -46,6 +49,7 @@ public class Add implements Callable<Integer> {
         body.addProperty("command", command);
         body.addProperty("timeout", timeout);
         body.addProperty("description", description);
+        body.addProperty("requested_cpu", cpu);
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
         writeChannel(request);
 

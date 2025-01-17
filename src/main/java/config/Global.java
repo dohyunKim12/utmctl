@@ -11,6 +11,8 @@ public class Global {
     private String filePath;
     private String caller = "undefined";
     private String licenseType = System.getenv("LICENSE_TYPE");
+    private String utmdPath = System.getenv("UTMD_PATH");
+    private String os = System.getProperty("os.name").toLowerCase();
     private boolean errorFlag = false;
 
     public String getServerIp() {
@@ -43,6 +45,22 @@ public class Global {
 
     public void setLicenseType(String licenseType) {
         this.licenseType = licenseType;
+    }
+
+    public String getUtmdPath() {
+        return utmdPath;
+    }
+
+    public void setUtmdPath(String utmdPath) {
+        this.utmdPath = utmdPath;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
     }
 
     private static class Holder {

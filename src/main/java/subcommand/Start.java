@@ -27,6 +27,7 @@ public class Start implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         // svc UTMd start
+        System.out.println("Starting utmd ....");
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
             if (Global.getInstance().getOs().contains("win")) {
@@ -44,19 +45,13 @@ public class Start implements Callable<Integer> {
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
-
-                // 에러 출력 읽기
                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                 while ((line = errorReader.readLine()) != null) {
                     System.err.println(line);
                 }
-
-                // 프로세스 종료 코드 확인
                 int exitCode = process.waitFor();
                 System.out.println("Exit Code: " + exitCode);
             }
-
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

@@ -5,9 +5,13 @@ import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import picocli.CommandLine;
+import util.PrintUtils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static cli.Admin.writeChannel;
@@ -16,30 +20,59 @@ import static cli.Admin.writeChannel;
 @CommandLine.Command(name = "add",
         description = "Add task to TM")
 public class Add implements Callable<Integer> {
-    @CommandLine.Parameters(arity = "1..*", paramLabel = "COMMAND", description = "SLURM command")
-    String[] commands;
-    @CommandLine.Option(names = { "-l", "--license-count"}, required = true, paramLabel = "LICENSE_COUNT", description = "Number of license to be need")
+    @CommandLine.Parameters(
+            arity = "0",
+            paramLabel = "COMMAND",
+            description = "SLURM command with arguments (e.g., 'srun -c2 --mem=20G ...')"
+    )
+    private String commandsPlaceholder;
+    @CommandLine.Unmatched
+    private List<String> commands;
+
+    @CommandLine.Option(
+            names = { "-l", "--license-count"},
+            required = true,
+            paramLabel = "LICENSE_COUNT",
+            description = "Number of license to be need"
+    )
     Integer licenseCount = 0;
-    @CommandLine.Option(names = { "-t", "--timeout"}, required = true, paramLabel = "TIMEOUT", description = "Timeout of task")
+
+    @CommandLine.Option(
+            names = { "-t", "--timeout"},
+            required = true,
+            paramLabel = "TIMEOUT",
+            description = "Timeout of task"
+    )
     Integer timeout = 0;
-    @CommandLine.Option(names = { "-d",
-            "--description"}, arity = "1..*", paramLabel = "DESCRIPTION", description = "Description of Task\n" +
-            "(delimiter '-')")
-    String[] descriptions;
+
+    @CommandLine.Option(
+            names = { "-d", "--description"},
+            arity = "1..*",
+            paramLabel = "DESCRIPTION",
+            description = "Description of Task\n"
+    )
+    String[] descriptions = null;
     @Override
     public Integer call() throws Exception {
         System.out.println("Trying to put job in UTM ....");
         SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getServerUrl() + "/api/item/taskadd");
 
-        String command = Arrays.stream(commands)
-                .collect(Collectors.joining(" "));
-        String description = Arrays.stream(descriptions)
-                .collect(Collectors.joining(" "));
+        if (commands == null) {
+            PrintUtils.printError("No commands to add");
+            return 1;
+        }
+        String command = "srun " + String.join(" ", commands);
+        String description = descriptions != null ? Arrays.stream(descriptions)
+                .collect(Collectors.joining(" ")) : null;
         String username = System.getProperty("user.name");
         String workingDir = System.getProperty("user.dir");
 
-//        srun -c2 --mem=20G xa -c xa_cmd_file -i PVT_sfg_sigrcmin_0p8250v_0p6750v_m40c_NM-C1_D1_L1_MCS00_MCS+
+        Pattern pattern = Pattern.compile("-c(\\d+)");
+        Matcher matcher = pattern.matcher(command);
         int cpu = 0;
+        if (matcher.find()) {
+            cpu = Integer.parseInt(matcher.group(1));
+        }
 
         JsonObject body = new JsonObject();
         body.addProperty("user", username);

@@ -54,15 +54,8 @@ public class Admin {
             System.exit(0);
         }
 
-        for (int i = 1; i < args.length; i++) {
+        for (int i = 0; i < args.length; i++) {
             param += args[i] + " ";
-        }
-
-        if(args[0].contains(":")) {
-            String ip = args[0].split(":")[0];
-            String port = args[0].split(":")[1];
-            Global.getInstance().setServerIp(ip);
-            Global.getInstance().setServerPort(port);
         }
 
         int exitCode = cmd

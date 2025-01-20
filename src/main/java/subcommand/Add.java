@@ -41,7 +41,7 @@ public class Add implements Callable<Integer> {
             names = { "-t", "--timeout"},
             required = true,
             paramLabel = "TIMEOUT",
-            description = "Timeout of task"
+            description = "Timeout of task (MINUTES)"
     )
     Integer timeout = 0;
 
@@ -61,7 +61,7 @@ public class Add implements Callable<Integer> {
             PrintUtils.printError("No commands to add");
             return 1;
         }
-        String command = "srun " + String.join(" ", commands);
+        String command = "srun " + String.join(" ", commands + " -t" + timeout);
         String description = descriptions != null ? Arrays.stream(descriptions)
                 .collect(Collectors.joining(" ")) : null;
         String username = System.getProperty("user.name");

@@ -9,6 +9,7 @@ import util.PrintUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,6 +67,8 @@ public class Add implements Callable<Integer> {
                 .collect(Collectors.joining(" ")) : null;
         String username = System.getProperty("user.name");
         String workingDir = System.getProperty("user.dir");
+        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
+        String uuid = timestamp + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 
         Pattern pattern = Pattern.compile("-c(\\d+)");
         Matcher matcher = pattern.matcher(command);
@@ -83,6 +86,7 @@ public class Add implements Callable<Integer> {
         body.addProperty("timeout", timeout);
         body.addProperty("description", description);
         body.addProperty("requested_cpu", cpu);
+        body.addProperty("uuid", uuid);
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
         writeChannel(request);
 

@@ -13,6 +13,7 @@ public class Global {
     private String licenseType = System.getenv("LICENSE_TYPE");
     private String utmdPath = System.getenv("UTMD_PATH");
     private String os = System.getProperty("os.name").toLowerCase();
+    private String username = System.getProperty("user.name").toLowerCase();
     private boolean errorFlag = false;
 
     public String getServerIp() {
@@ -61,6 +62,14 @@ public class Global {
 
     public void setOs(String os) {
         this.os = os;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     private static class Holder {

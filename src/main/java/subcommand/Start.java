@@ -18,9 +18,6 @@ import static cli.Admin.writeChannel;
 @CommandLine.Command(name = "start",
         description = "Start UTM daemon")
 public class Start implements Callable<Integer> {
-    @CommandLine.Option(names = { "-f",
-            "--file" }, paramLabel = "FILE", description = "Config env file path for SRUN\n")
-    String file = null;
     @CommandLine.Option(names = { "-fg",
             "--foreground" }, paramLabel = "FOREGROUND", description = "Run UTMCTL foreground\n")
     Boolean foreground = false;
@@ -30,6 +27,13 @@ public class Start implements Callable<Integer> {
         System.out.println("Starting utmd ....");
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.environment().put("TOPIC_NAME", "utm-" + Global.getInstance().getUsername()); // utm-username
+            processBuilder.environment().put("KAFKA_SERER", "localhost:9092");
+            if (foreground) {
+                processBuilder.environment().put("FOREGROUND", "true");
+            } else {
+                processBuilder.environment().put("FOREGROUND", "false");
+            }
             if (Global.getInstance().getOs().contains("win")) {
                 // Windows
                 processBuilder.command("cmd.exe", "/c", Global.getInstance().getUtmdPath());
@@ -51,6 +55,8 @@ public class Start implements Callable<Integer> {
                 }
                 int exitCode = process.waitFor();
                 System.out.println("Exit Code: " + exitCode);
+            } else {
+                System.out.println("UTMD started in background");
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

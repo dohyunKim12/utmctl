@@ -28,8 +28,7 @@ public class Cancel implements Callable<Integer> {
             jobIdList.add(jobId);
         }
         body.add("jobIdList", jobIdList);
-        String username = System.getProperty("user.name");
-        body.addProperty("user", username);
+        body.addProperty("user", Global.getInstance().getUsername());
         body.addProperty("license_type", Global.getInstance().getLicenseType());
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
         writeChannel(request);

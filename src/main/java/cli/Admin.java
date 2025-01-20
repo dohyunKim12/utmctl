@@ -16,9 +16,8 @@ import java.util.concurrent.Future;
 
 
 @Command(name = "",
-        subcommands = {Manual.class, Version.class, Add.class, Cancel.class,
-//                AddTest.class, Start.class, End.class
-})
+        subcommands = {Manual.class, Version.class, Add.class, Cancel.class, Start.class, End.class}
+)
 public class Admin {
     static String param = "";
     public static void main(String[] args) {

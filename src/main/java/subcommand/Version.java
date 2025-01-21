@@ -17,7 +17,7 @@ import static cli.Admin.writeChannel;
 public class Version implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
-        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Global.getInstance().getServerUrl() + "/api/version");
+        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Global.getInstance().getUtmServerUrl() + "/api/version");
         StringBuilder stb = new StringBuilder();
         try {
             Manifest manifest = this.getManifest();

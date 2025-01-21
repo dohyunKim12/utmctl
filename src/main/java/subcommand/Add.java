@@ -60,7 +60,7 @@ public class Add implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         System.out.println("Trying to put job in UTM ....");
-        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getServerUrl() + "/api/task/add");
+        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getUtmServerUrl() + "/api/task/add");
 
         if (commands == null) {
             PrintUtils.printError("No commands to add");

@@ -1,64 +1,42 @@
 package subcommand;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import config.Global;
-import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
-import org.apache.hc.core5.http.ContentType;
 import picocli.CommandLine;
+import util.PrintUtils;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.concurrent.Callable;
-
-import static cli.Admin.writeChannel;
 
 
 @CommandLine.Command(name = "start",
         description = "Start UTM daemon")
 public class Start implements Callable<Integer> {
-    @CommandLine.Option(names = { "-fg",
-            "--foreground" }, paramLabel = "FOREGROUND", description = "Run UTMCTL foreground\n")
-    Boolean foreground = false;
     @Override
     public Integer call() throws Exception {
         // svc UTMd start
         System.out.println("Starting utmd ....");
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.environment().put("TOPIC_NAME", "utm-" + Global.getInstance().getUsername()); // utm-username
-            processBuilder.environment().put("KAFKA_SERER", "localhost:9092");
-            if (foreground) {
-                processBuilder.environment().put("FOREGROUND", "true");
-            } else {
-                processBuilder.environment().put("FOREGROUND", "false");
-            }
+            processBuilder.environment().put("SERVER_IP", Global.getInstance().getServerIp());
+            processBuilder.environment().put("UTM_PORT", Global.getInstance().getUtmPort());
+            processBuilder.environment().put("KAFKA_PORT", Global.getInstance().getKafkaPort());
+            processBuilder.environment().put("TOPIC_NAME", "utm-" + Global.getInstance().getUsername());
             if (Global.getInstance().getOs().contains("win")) {
                 // Windows
-                processBuilder.command("cmd.exe", "/c", Global.getInstance().getUtmdPath());
+                PrintUtils.printError("Windows is not supported on this platform");
+                return 1;
             } else {
                 // Linux/Mac
-                processBuilder.command("sh", Global.getInstance().getUtmdPath());
-            }
-            Process process = processBuilder.start();
-
-            if(foreground) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-                BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                while ((line = errorReader.readLine()) != null) {
-                    System.err.println(line);
-                }
-                int exitCode = process.waitFor();
-                System.out.println("Exit Code: " + exitCode);
-            } else {
+                processBuilder.command(
+                        "nohup",
+                        "sh", "-c", "python3 " + Global.getInstance().getUtmdPath() + " > " + Global.getInstance().getUtmdPath() + "/utmd.log"  + " 2>&1 &"
+                );
+                processBuilder.directory(new File(Global.getInstance().getUtmdPath()));
+                processBuilder.start();
                 System.out.println("UTMD started in background");
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return 0;

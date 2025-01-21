@@ -4,9 +4,10 @@ package config;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Global {
-    private String serverIp = System.getenv("UTM_SERVER_IP");
-    private String serverPort = System.getenv("UTM_SERVER_PORT");
-    private String serverUrl = "http://" + serverIp + ":" + serverPort;
+    private String serverIp = System.getenv("SERVER_IP");
+    private String utmPort = System.getenv("UTM_PORT");
+    private String kafkaPort = System.getenv("KAFKA_PORT");
+    private String utmServerUrl = "http://" + serverIp + ":" + utmPort;
     private ClassLoader cl = Thread.currentThread().getContextClassLoader();
     private String filePath;
     private String caller = "undefined";
@@ -23,20 +24,20 @@ public class Global {
         this.serverIp = serverIp;
     }
 
-    public String getServerPort() {
-        return serverPort;
+    public String getUtmPort() {
+        return utmPort;
     }
 
-    public void setServerPort(String serverPort) {
-        this.serverPort = serverPort;
+    public void setUtmPort(String utmPort) {
+        this.utmPort = utmPort;
     }
 
-    public String getServerUrl() {
-        return serverUrl;
+    public String getUtmServerUrl() {
+        return utmServerUrl;
     }
 
-    public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
+    public void setUtmServerUrl(String utmServerUrl) {
+        this.utmServerUrl = utmServerUrl;
     }
 
     public String getUtmdPath() {
@@ -61,6 +62,14 @@ public class Global {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getKafkaPort() {
+        return kafkaPort;
+    }
+
+    public void setKafkaPort(String kafkaPort) {
+        this.kafkaPort = kafkaPort;
     }
 
     private static class Holder {

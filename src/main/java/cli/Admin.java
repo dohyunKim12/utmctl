@@ -32,7 +32,7 @@ public class Admin {
             System.exit(0);
         }
 
-        if (Global.getInstance().getServerIp() == null || Global.getInstance().getServerPort() == null) {
+        if (Global.getInstance().getServerIp() == null || Global.getInstance().getUtmPort() == null) {
             System.out.println("UTM_SERVER_IP or UTM_SERVER_PORT not set. (ENV)");
             System.exit(0);
         }

@@ -7,8 +7,12 @@ import org.apache.hc.core5.http.ContentType;
 import picocli.CommandLine;
 import util.PrintUtils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -31,12 +35,12 @@ public class Add implements Callable<Integer> {
     private List<String> commands;
 
     @CommandLine.Option(
-            names = { "-l", "--license-count"},
+            names = { "-l", "--license"},
             required = true,
-            paramLabel = "LICENSE_COUNT",
-            description = "Number of license to be need"
+            paramLabel = "LICENSE_TYPE:COUNT",
+            description = "LICENSE_TYPE:COUNT Number of license to be need"
     )
-    Integer licenseCount = 0;
+    String license;
 
     @CommandLine.Option(
             names = { "-t", "--timeout"},
@@ -56,13 +60,19 @@ public class Add implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         System.out.println("Trying to put job in UTM ....");
-        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getServerUrl() + "/api/item/taskadd");
+        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getServerUrl() + "/api/task/add");
 
         if (commands == null) {
             PrintUtils.printError("No commands to add");
             return 1;
         }
-        String command = "srun " + String.join(" ", commands + " -t" + timeout);
+        String command = "srun -t" + timeout + " " + String.join(" ", commands);
+        if(!license.contains(":")) {
+            PrintUtils.printError("Invalid license format. ':' character is missing\n [LICENSE_TYPE:LICENSE_COUNT]");
+            return 1;
+        }
+        String licenseType = license.split(":")[0];
+        int licenseCount = Integer.parseInt(license.split(":")[1]);
         String description = descriptions != null ? Arrays.stream(descriptions)
                 .collect(Collectors.joining(" ")) : null;
         String username = System.getProperty("user.name");
@@ -77,9 +87,22 @@ public class Add implements Callable<Integer> {
             cpu = Integer.parseInt(matcher.group(1));
         }
 
+        // Create env file
+        String filePath = workingDir + File.separator + uuid + ".env";
+        try (FileWriter writer = new FileWriter(filePath)) {
+            Map<String, String> env = System.getenv();
+            for (Map.Entry<String, String> entry : env.entrySet()) {
+                writer.write(entry.getKey() + "=" + entry.getValue() + "\n");
+            }
+            System.out.println("Env values saved in " + filePath + " successfully");
+        } catch (IOException e) {
+            System.err.println("Error occurred while writing env file " + e.getMessage());
+        }
+
+        // Write Message
         JsonObject body = new JsonObject();
         body.addProperty("user", username);
-        body.addProperty("license_type", Global.getInstance().getLicenseType());
+        body.addProperty("license_type", licenseType);
         body.addProperty("license_count", licenseCount);
         body.addProperty("directory", workingDir);
         body.addProperty("command", command);

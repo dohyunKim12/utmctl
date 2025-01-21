@@ -36,10 +36,6 @@ public class Admin {
             System.out.println("UTM_SERVER_IP or UTM_SERVER_PORT not set. (ENV)");
             System.exit(0);
         }
-        if (Global.getInstance().getLicenseType() == null) {
-            System.out.println("LICENSE_TYPE not set. (ENV)");
-            System.exit(0);
-        }
 
         List<String> helpCmd = new ArrayList<>();
         helpCmd.add("help");

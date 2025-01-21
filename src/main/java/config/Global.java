@@ -10,7 +10,6 @@ public class Global {
     private ClassLoader cl = Thread.currentThread().getContextClassLoader();
     private String filePath;
     private String caller = "undefined";
-    private String licenseType = System.getenv("LICENSE_TYPE");
     private String utmdPath = System.getenv("UTMD_PATH");
     private String os = System.getProperty("os.name").toLowerCase();
     private String username = System.getProperty("user.name").toLowerCase();
@@ -38,14 +37,6 @@ public class Global {
 
     public void setServerUrl(String serverUrl) {
         this.serverUrl = serverUrl;
-    }
-
-    public String getLicenseType() {
-        return licenseType;
-    }
-
-    public void setLicenseType(String licenseType) {
-        this.licenseType = licenseType;
     }
 
     public String getUtmdPath() {

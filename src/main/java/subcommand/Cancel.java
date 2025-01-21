@@ -20,16 +20,15 @@ public class Cancel implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         System.out.println("Trying to cancel job from UTM ....");
-        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getServerUrl() + "/api/item/cancel");
+        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getServerUrl() + "/api/task/cancel");
 
         JsonObject body = new JsonObject();
         JsonArray jobIdList = new JsonArray();
         for (String jobId : jobId) {
             jobIdList.add(jobId);
         }
-        body.add("jobIdList", jobIdList);
+        body.add("task_id_list", jobIdList);
         body.addProperty("user", Global.getInstance().getUsername());
-        body.addProperty("license_type", Global.getInstance().getLicenseType());
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
         writeChannel(request);
 

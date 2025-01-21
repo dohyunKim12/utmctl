@@ -22,10 +22,10 @@ public class PrintUtils {
     public static void print(SimpleHttpResponse response) {
         int statusCode = response.getCode();
         String responseMessage = response.getBodyText();
-        if (statusCode != 200) {
-            printError(responseMessage);
-        } else {
+        if (statusCode >= 200 && statusCode < 300) {
             printlnGreen(responseMessage);
+        } else {
+            printError(responseMessage);
         }
     }
 

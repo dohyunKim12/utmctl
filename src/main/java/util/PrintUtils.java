@@ -52,6 +52,9 @@ public class PrintUtils {
                     TaskPrinter taskDescriber = new TaskPrinter();
                     taskDescriber.describe(taskDto);
                     break;
+                case CANCEL:
+                    printlnGreen("Task successfully canceled. " + responseMessage);
+                    break;
             }
         } else {
             printError(responseMessage);

@@ -32,8 +32,8 @@ public class Admin {
             System.exit(0);
         }
 
-        if (Global.getInstance().getServerIp() == null) {
-            System.out.print(PrintUtils.ANSI_BOLD_RED+"The following environment variables must be set: \n\n"+ PrintUtils.ANSI_RESET);
+        if (Global.getInstance().getServerIp() == null || Global.getInstance().getUtmdPath() == null) {
+            System.out.println(PrintUtils.ANSI_BOLD_RED+"The following environment variables must be set: \n"+ PrintUtils.ANSI_RESET);
                     System.out.println("[SERVER_IP='IP address for UTM & kafka server'] \n" +
                     "[UTM_PORT='Port for UTM server (default: 8023)'] \n" +
                     "[KAFKA_PORT='Port for Kafka (default: 9092)'] \n" +

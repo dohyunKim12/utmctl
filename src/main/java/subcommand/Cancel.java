@@ -30,6 +30,7 @@ public class Cancel implements Callable<Integer> {
         body.add("task_id_list", jobIdList);
         body.addProperty("user", Global.getInstance().getUsername());
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
+        Global.getInstance().setCaller(Global.ActionType.CANCEL);
         writeChannel(request);
 
         return 0;

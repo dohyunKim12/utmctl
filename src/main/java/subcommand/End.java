@@ -6,18 +6,20 @@ import picocli.CommandLine;
 import java.io.*;
 import java.util.concurrent.Callable;
 
+import static util.ProcessUtils.killProcessByPID;
+import static util.ProcessUtils.readPIDFromFile;
+
 
 @CommandLine.Command(name = "end",
         description = "End UTM daemon")
 public class End implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
-        // svc UTMd end
         System.out.println("Finishing utmd ....");
-        // process kill (read utmd pid from utmd pid file)
-        String utmdPidFile = "/tmp/utmd.pid";
+        // Process terminate (read utmd pid from utmd pid file)
+        String utmdPidFilePath = Global.getInstance().getUtmdPath() + "/tmp/utmd.pid";
         try {
-            String pid = readPIDFromFile(utmdPidFile);
+            String pid = readPIDFromFile(utmdPidFilePath);
 
             if (pid != null && !pid.isEmpty()) {
                 boolean isKilled = killProcessByPID(pid);
@@ -37,24 +39,6 @@ public class End implements Callable<Integer> {
 
         return 0;
     }
-    private static String readPIDFromFile(String filePath) throws IOException {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            throw new IOException("File not found: " + filePath);
-        }
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            return reader.readLine();
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-    }
-    private static boolean killProcessByPID(String pid) throws IOException, InterruptedException {
-        Process process = new ProcessBuilder("kill", "-9", pid).start();
-        int exitCode = process.waitFor();
-        return exitCode == 0;
-    }
+
+
 }

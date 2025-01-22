@@ -23,7 +23,7 @@ public class Get implements Callable<Integer> {
     String status;
     @Override
     public Integer call() throws Exception {
-        System.out.println("Trying to find task list assigned by user " + user + " from UTM ....");
+        System.out.println("Trying to find task list assigned by user " + user + " from UTM ....\n");
 
         String url = Global.getInstance().getUtmServerUrl() + "/api/task/list/" + user;
         if(status != null) {

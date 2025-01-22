@@ -18,7 +18,7 @@ public class Start implements Callable<Integer> {
         if (Global.getInstance().getUtmdPath() == null) {
             System.out.print(PrintUtils.ANSI_BOLD_RED+"Env value 'UTMD_PATH' unset "+ PrintUtils.ANSI_RESET);
         }
-        System.out.println("Starting utmd ....");
+        System.out.println("Starting utmd ....\n");
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.environment().put("SERVER_IP", Global.getInstance().getServerIp());

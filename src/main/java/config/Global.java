@@ -102,7 +102,8 @@ public class Global {
         ADD(2),
         CANCEL(3),
         START(4),
-        END(5);
+        END(5),
+        DESCRIBE(6);
 
         private final int value;
         ActionType(int value) { this.value = value; }

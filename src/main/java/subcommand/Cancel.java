@@ -19,7 +19,7 @@ public class Cancel implements Callable<Integer> {
     String[] jobId;
     @Override
     public Integer call() throws Exception {
-        System.out.println("Trying to cancel job from UTM ....");
+        System.out.println("Trying to cancel job from UTM ....\n");
         SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getUtmServerUrl() + "/api/task/cancel");
 
         JsonObject body = new JsonObject();

@@ -30,6 +30,7 @@ public class PrintUtils {
     public static void print(SimpleHttpResponse response) {
         int statusCode = response.getCode();
         String responseMessage = response.getBodyText();
+        Gson gson = new Gson();
         if (statusCode >= 200 && statusCode < 300) {
             switch (Global.getInstance().getCaller()) {
                 case ADD:
@@ -38,14 +39,19 @@ public class PrintUtils {
                 case GET:
                     List<TaskDto> taskDtoList = new ArrayList<>();
                     JsonArray ja = JsonParser.parseString(responseMessage).getAsJsonArray();
-                    Gson gson = new Gson();
 
                     for (JsonElement je : ja) {
                         TaskDto taskDto = gson.fromJson(je, TaskDto.class);
                         taskDtoList.add(taskDto);
                     }
-                    TaskPrinter printer = new TaskPrinter(taskDtoList);
-                    printer.print();
+                    TaskPrinter taskPrinter = new TaskPrinter(taskDtoList);
+                    taskPrinter.print();
+                    break;
+                case DESCRIBE:
+                    TaskDto taskDto = gson.fromJson(JsonParser.parseString(responseMessage), TaskDto.class);
+                    TaskPrinter taskDescriber = new TaskPrinter();
+                    taskDescriber.describe(taskDto);
+                    break;
             }
         } else {
             printError(responseMessage);

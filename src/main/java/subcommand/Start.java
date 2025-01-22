@@ -15,6 +15,9 @@ public class Start implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         // svc UTMd start
+        if (Global.getInstance().getUtmdPath() == null) {
+            System.out.print(PrintUtils.ANSI_BOLD_RED+"Env value 'UTMD_PATH' unset "+ PrintUtils.ANSI_RESET);
+        }
         System.out.println("Starting utmd ....");
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();

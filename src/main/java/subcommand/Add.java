@@ -111,6 +111,7 @@ public class Add implements Callable<Integer> {
         body.addProperty("requested_cpu", cpu);
         body.addProperty("uuid", uuid);
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
+        Global.getInstance().setCaller(Global.ActionType.ADD);
         writeChannel(request);
 
         return 0;

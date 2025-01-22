@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 
 
 @Command(name = "",
-        subcommands = {Manual.class, Version.class, Add.class, Cancel.class, Start.class, End.class}
+        subcommands = {Manual.class, Start.class, Add.class, Cancel.class, Get.class, End.class, Version.class}
 )
 public class Admin {
     static String param = "";
@@ -32,12 +32,12 @@ public class Admin {
             System.exit(0);
         }
 
-        if (Global.getInstance().getServerIp() == null || Global.getInstance().getUtmPort() == null) {
+        if (Global.getInstance().getServerIp() == null) {
             System.out.print(PrintUtils.ANSI_BOLD_RED+"The following environment variables must be set: \n\n"+ PrintUtils.ANSI_RESET);
                     System.out.println("[SERVER_IP='IP address for UTM & kafka server'] \n" +
-                    "[UTM_PORT='Port for UTM server'] \n" +
-                    "[KAFKA_PORT='Port for Kafka'] \n" +
-                    "[UTMD_PATH='Path for UTMd']");
+                    "[UTM_PORT='Port for UTM server (default: 8023)'] \n" +
+                    "[KAFKA_PORT='Port for Kafka (default: 9092)'] \n" +
+                    "[UTMD_PATH='File path for UTMd']");
             System.exit(0);
         }
 

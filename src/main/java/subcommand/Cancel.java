@@ -13,7 +13,7 @@ import static cli.Admin.writeChannel;
 
 
 @CommandLine.Command(name = "cancel",
-        description = "Cancel task from TM or Local")
+        description = "Cancel task from UTM or Local")
 public class Cancel implements Callable<Integer> {
     @CommandLine.Parameters(arity = "1..*", paramLabel = "JOB_ID_LIST", description = "Job id from UTM add response")
     String[] jobId;

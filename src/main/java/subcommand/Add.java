@@ -92,7 +92,7 @@ public class Add implements Callable<Integer> {
         try (FileWriter writer = new FileWriter(filePath)) {
             Map<String, String> env = System.getenv();
             for (Map.Entry<String, String> entry : env.entrySet()) {
-                writer.write(entry.getKey() + "=" + entry.getValue() + "\n");
+                writer.write(entry.getKey() + "='" + entry.getValue().replaceAll("([\\\\\\n\\'\\\"])", "\\\\$1") + "'\n");
             }
             System.out.println("Env values saved in " + filePath + " successfully");
         } catch (IOException e) {

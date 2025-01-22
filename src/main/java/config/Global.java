@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Global {
     private String serverIp = System.getenv("SERVER_IP");
     private String utmdPath = System.getenv("UTMD_PATH");
+    private String pythonPath = System.getenv("UTMD_PYTHON_PATH");
     private String utmPort = System.getenv("UTM_PORT") == null ? "8023" : System.getenv("UTM_PORT");
     private String kafkaPort = System.getenv("KAFKA_PORT") == null ? "9092" : System.getenv("KAFKA_PORT");
     private String utmServerUrl = "http://" + serverIp + ":" + utmPort;
@@ -77,6 +78,14 @@ public class Global {
 
     public void setCaller(ActionType caller) {
         this.caller = caller;
+    }
+
+    public String getPythonPath() {
+        return pythonPath;
+    }
+
+    public void setPythonPath(String pythonPath) {
+        this.pythonPath = pythonPath;
     }
 
     private static class Holder {

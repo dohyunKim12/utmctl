@@ -56,7 +56,7 @@ public class Start implements Callable<Integer> {
                 // Linux/Mac
                 processBuilder.command(
                         "nohup",
-                        "sh", "-c", "python3 " + Global.getInstance().getUtmdPath() + "/utmd.py > " + Global.getInstance().getUtmdPath() + "/utmd.log"  + " 2>&1 &"
+                        "sh", "-c", Global.getInstance().getPythonPath() + " " + Global.getInstance().getUtmdPath() + "/utmd.py > " + Global.getInstance().getUtmdPath() + "/utmd.log"  + " 2>&1 &"
                 );
                 processBuilder.directory(new File(Global.getInstance().getUtmdPath()));
                 processBuilder.start();

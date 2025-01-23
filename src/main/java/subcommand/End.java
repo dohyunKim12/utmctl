@@ -17,7 +17,7 @@ public class End implements Callable<Integer> {
     public Integer call() throws Exception {
         System.out.println("Finishing utmd ....");
         // Process terminate (read utmd pid from utmd pid file)
-        String utmdPidFilePath = Global.getInstance().getUtmdPath() + "/tmp/utmd.pid";
+        String utmdPidFilePath = Global.getInstance().getUtmdUserPath() + "/tmp/utmd.pid";
         try {
             String pid = readPIDFromFile(utmdPidFilePath);
 

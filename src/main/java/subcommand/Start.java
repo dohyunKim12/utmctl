@@ -17,11 +17,11 @@ public class Start implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         // svc UTMd start
-        if (Global.getInstance().getUtmdPath() == null) {
+        if (Global.getInstance().getUtmdBinPath() == null) {
             System.out.println(PrintUtils.ANSI_BOLD_RED+"Env value 'UTMD_PATH' unset "+ PrintUtils.ANSI_RESET);
         }
         System.out.println("Starting utmd ....\n");
-        String utmdPidFilePath = Global.getInstance().getUtmdPath() + "/tmp/utmd.pid";
+        String utmdPidFilePath = Global.getInstance().getUtmdUserPath() + "/tmp/utmd.pid";
         String pid = readPIDFromFile(utmdPidFilePath);
         if (pid != null) {
             if (isProcessRunning(pid)) {
@@ -56,9 +56,9 @@ public class Start implements Callable<Integer> {
                 // Linux/Mac
                 processBuilder.command(
                         "nohup",
-                        "sh", "-c", Global.getInstance().getPythonPath() + " " + Global.getInstance().getUtmdPath() + "/utmd.py > " + Global.getInstance().getUtmdPath() + "/utmd.log"  + " 2>&1 &"
+                        "sh", "-c", Global.getInstance().getPythonPath() + " " + Global.getInstance().getUtmdBinPath() + "/utmd.py > " + Global.getInstance().getUtmdBinPath() + "/utmd.log"  + " 2>&1 &"
                 );
-                processBuilder.directory(new File(Global.getInstance().getUtmdPath()));
+                processBuilder.directory(new File(Global.getInstance().getUtmdBinPath()));
                 processBuilder.start();
                 System.out.println("UTMD started in background");
             }

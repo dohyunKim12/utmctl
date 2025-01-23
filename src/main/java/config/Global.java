@@ -5,7 +5,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Global {
     private String serverIp = System.getenv("SERVER_IP");
-    private String utmdPath = System.getenv("UTMD_PATH");
+    private String utmdBinPath = System.getenv("UTMD_BIN_PATH");
+    private String utmdUserPath = System.getenv("HOME") + "/utmd";
     private String pythonPath = System.getenv("UTMD_PYTHON_PATH");
     private String utmPort = System.getenv("UTM_PORT") == null ? "8023" : System.getenv("UTM_PORT");
     private String kafkaPort = System.getenv("KAFKA_PORT") == null ? "9092" : System.getenv("KAFKA_PORT");
@@ -40,12 +41,12 @@ public class Global {
         this.utmServerUrl = utmServerUrl;
     }
 
-    public String getUtmdPath() {
-        return utmdPath;
+    public String getUtmdBinPath() {
+        return utmdBinPath;
     }
 
-    public void setUtmdPath(String utmdPath) {
-        this.utmdPath = utmdPath;
+    public void setUtmdBinPath(String utmdBinPath) {
+        this.utmdBinPath = utmdBinPath;
     }
 
     public String getOs() {
@@ -86,6 +87,14 @@ public class Global {
 
     public void setPythonPath(String pythonPath) {
         this.pythonPath = pythonPath;
+    }
+
+    public String getUtmdUserPath() {
+        return utmdUserPath;
+    }
+
+    public void setUtmdUserPath(String utmdUserPath) {
+        this.utmdUserPath = utmdUserPath;
     }
 
     private static class Holder {

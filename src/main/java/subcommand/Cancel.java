@@ -2,6 +2,7 @@ package subcommand;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import config.Constants;
 import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.core5.http.ContentType;
@@ -20,7 +21,7 @@ public class Cancel implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         System.out.println("Trying to cancel job from UTM ....\n");
-        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getUtmServerUrl() + "/api/task/cancel");
+        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Constants.utmServerUrl + "/api/task/cancel");
 
         JsonObject body = new JsonObject();
         JsonArray jobIdList = new JsonArray();
@@ -28,7 +29,7 @@ public class Cancel implements Callable<Integer> {
             jobIdList.add(jobId);
         }
         body.add("task_id_list", jobIdList);
-        body.addProperty("user", Global.getInstance().getUsername());
+        body.addProperty("user", Constants.username);
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
         Global.getInstance().setCaller(Global.ActionType.CANCEL);
         writeChannel(request);

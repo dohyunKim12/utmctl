@@ -1,5 +1,6 @@
 package subcommand;
 
+import config.Constants;
 import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import picocli.CommandLine;
@@ -17,7 +18,7 @@ import static cli.Admin.writeChannel;
 public class Version implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
-        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Global.getInstance().getUtmServerUrl() + "/api/version");
+        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Constants.utmServerUrl + "/api/version");
         StringBuilder stb = new StringBuilder();
         try {
             Manifest manifest = this.getManifest();

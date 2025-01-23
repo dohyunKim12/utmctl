@@ -1,5 +1,6 @@
 package subcommand;
 
+import config.Constants;
 import config.Global;
 import picocli.CommandLine;
 import util.PrintUtils;
@@ -17,11 +18,11 @@ public class Start implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         // svc UTMd start
-        if (Global.getInstance().getUtmdBinPath() == null) {
+        if (Constants.utmdBinPath == null) {
             System.out.println(PrintUtils.ANSI_BOLD_RED+"Env value 'UTMD_PATH' unset "+ PrintUtils.ANSI_RESET);
         }
         System.out.println("Starting utmd ....\n");
-        String utmdPidFilePath = Global.getInstance().getUtmdUserPath() + "/tmp/utmd.pid";
+        String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
         String pid = readPIDFromFile(utmdPidFilePath);
         if (pid != null) {
             if (isProcessRunning(pid)) {
@@ -44,11 +45,11 @@ public class Start implements Callable<Integer> {
         // Start utmd.py
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.environment().put("SERVER_IP", Global.getInstance().getServerIp());
-            processBuilder.environment().put("UTM_PORT", Global.getInstance().getUtmPort());
-            processBuilder.environment().put("KAFKA_PORT", Global.getInstance().getKafkaPort());
-            processBuilder.environment().put("TOPIC_NAME", "utm-" + Global.getInstance().getUsername());
-            if (Global.getInstance().getOs().contains("win")) {
+            processBuilder.environment().put("SERVER_IP", Constants.serverIp);
+            processBuilder.environment().put("UTM_PORT", Constants.utmPort);
+            processBuilder.environment().put("KAFKA_PORT", Constants.kafkaPort);
+            processBuilder.environment().put("TOPIC_NAME", "utm-" + Constants.username);
+            if (Constants.os.contains("win")) {
                 // Windows
                 PrintUtils.printError("Windows is not supported on this platform");
                 return 1;
@@ -56,9 +57,9 @@ public class Start implements Callable<Integer> {
                 // Linux/Mac
                 processBuilder.command(
                         "nohup",
-                        "sh", "-c", Global.getInstance().getPythonPath() + " " + Global.getInstance().getUtmdBinPath() + "/utmd.py > " + Global.getInstance().getUtmdBinPath() + "/utmd.log"  + " 2>&1 &"
+                        "sh", "-c", Constants.pythonPath + " " + Constants.utmdBinPath + "/utmd.py > " + Constants.utmdBinPath + "/utmd.log"  + " 2>&1 &"
                 );
-                processBuilder.directory(new File(Global.getInstance().getUtmdBinPath()));
+                processBuilder.directory(new File(Constants.utmdBinPath));
                 processBuilder.start();
                 System.out.println("UTMD started in background");
             }

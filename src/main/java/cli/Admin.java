@@ -1,5 +1,6 @@
 package cli;
 
+import config.Constants;
 import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
@@ -32,7 +33,7 @@ public class Admin {
             System.exit(0);
         }
 
-        if (Global.getInstance().getServerIp() == null || Global.getInstance().getUtmdBinPath() == null || Global.getInstance().getPythonPath() == null) {
+        if (Constants.serverIp == null || Constants.utmdBinPath == null || Constants.pythonPath == null) {
             System.out.println(PrintUtils.ANSI_BOLD_RED+"The following environment variables must be set: \n"+ PrintUtils.ANSI_RESET);
             System.out.println("[SERVER_IP='IP address for UTM & kafka server'] \n" +
                     "[UTMD_BIN_PATH='Binary file path for UTMd'] \n" +

@@ -1,5 +1,6 @@
 package subcommand;
 
+import config.Constants;
 import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import picocli.CommandLine;
@@ -17,7 +18,7 @@ public class Describe implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         System.out.println("Retrieving details for task ID " + taskId + " ....\n");
-        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Global.getInstance().getUtmServerUrl() + "/api/task/get/" + taskId);
+        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Constants.utmServerUrl + "/api/task/get/" + taskId);
         Global.getInstance().setCaller(Global.ActionType.DESCRIBE);
         writeChannel(request);
 

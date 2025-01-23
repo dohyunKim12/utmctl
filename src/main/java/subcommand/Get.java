@@ -1,5 +1,6 @@
 package subcommand;
 
+import config.Constants;
 import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import picocli.CommandLine;
@@ -25,7 +26,7 @@ public class Get implements Callable<Integer> {
     public Integer call() throws Exception {
         System.out.println("Trying to find task list assigned by user " + user + " from UTM ....\n");
 
-        String url = Global.getInstance().getUtmServerUrl() + "/api/task/list/" + user;
+        String url = Constants.utmServerUrl + "/api/task/list/" + user;
         if(status != null) {
             url += "?status=" + status;
         }

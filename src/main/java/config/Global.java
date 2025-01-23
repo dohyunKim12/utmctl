@@ -1,76 +1,16 @@
 package config;
 
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public class Global {
-    private String serverIp = System.getenv("SERVER_IP");
-    private String utmdBinPath = System.getenv("UTMD_BIN_PATH");
-    private String utmdUserPath = System.getenv("HOME") + "/utmd";
-    private String pythonPath = System.getenv("UTMD_PYTHON_PATH");
-    private String utmPort = System.getenv("UTM_PORT") == null ? "8023" : System.getenv("UTM_PORT");
-    private String kafkaPort = System.getenv("KAFKA_PORT") == null ? "9092" : System.getenv("KAFKA_PORT");
-    private String utmServerUrl = "http://" + serverIp + ":" + utmPort;
-    private ClassLoader cl = Thread.currentThread().getContextClassLoader();
-    private String os = System.getProperty("os.name").toLowerCase();
-    private String username = System.getProperty("user.name").toLowerCase();
-    private boolean errorFlag = false;
+
     private ActionType caller;
 
-    public String getServerIp() {
-        return serverIp;
+    private static class Holder {
+        public static final Global instance = new Global();
     }
 
-    public void setServerIp(String serverIp) {
-        this.serverIp = serverIp;
-    }
-
-    public String getUtmPort() {
-        return utmPort;
-    }
-
-    public void setUtmPort(String utmPort) {
-        this.utmPort = utmPort;
-    }
-
-    public String getUtmServerUrl() {
-        return utmServerUrl;
-    }
-
-    public void setUtmServerUrl(String utmServerUrl) {
-        this.utmServerUrl = utmServerUrl;
-    }
-
-    public String getUtmdBinPath() {
-        return utmdBinPath;
-    }
-
-    public void setUtmdBinPath(String utmdBinPath) {
-        this.utmdBinPath = utmdBinPath;
-    }
-
-    public String getOs() {
-        return os;
-    }
-
-    public void setOs(String os) {
-        this.os = os;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getKafkaPort() {
-        return kafkaPort;
-    }
-
-    public void setKafkaPort(String kafkaPort) {
-        this.kafkaPort = kafkaPort;
+    public static Global getInstance() {
+        return Holder.instance;
     }
 
     public ActionType getCaller() {
@@ -81,39 +21,6 @@ public class Global {
         this.caller = caller;
     }
 
-    public String getPythonPath() {
-        return pythonPath;
-    }
-
-    public void setPythonPath(String pythonPath) {
-        this.pythonPath = pythonPath;
-    }
-
-    public String getUtmdUserPath() {
-        return utmdUserPath;
-    }
-
-    public void setUtmdUserPath(String utmdUserPath) {
-        this.utmdUserPath = utmdUserPath;
-    }
-
-    private static class Holder {
-        public static final Global instance = new Global();
-    }
-
-    public static Global getInstance() {
-        return Holder.instance;
-    }
-
-    public boolean isErrorFlag() {
-        return errorFlag;
-    }
-    public void setErrorFlag(boolean errorFlag) {
-        this.errorFlag = errorFlag;
-    }
-    public int randInt() {
-        return(ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE));
-    }
 
     public enum ActionType {
         GET(1),

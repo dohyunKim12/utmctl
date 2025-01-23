@@ -1,6 +1,6 @@
 package subcommand;
 
-import config.Global;
+import config.Constants;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -17,7 +17,7 @@ public class End implements Callable<Integer> {
     public Integer call() throws Exception {
         System.out.println("Finishing utmd ....");
         // Process terminate (read utmd pid from utmd pid file)
-        String utmdPidFilePath = Global.getInstance().getUtmdUserPath() + "/tmp/utmd.pid";
+        String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
         try {
             String pid = readPIDFromFile(utmdPidFilePath);
 

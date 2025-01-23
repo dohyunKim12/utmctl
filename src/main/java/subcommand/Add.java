@@ -1,6 +1,7 @@
 package subcommand;
 
 import com.google.gson.JsonObject;
+import config.Constants;
 import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.core5.http.ContentType;
@@ -60,7 +61,7 @@ public class Add implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         System.out.println("Trying to put job in UTM ....\n");
-        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Global.getInstance().getUtmServerUrl() + "/api/task/add");
+        SimpleHttpRequest request = SimpleHttpRequest.create("POST",Constants.utmServerUrl + "/api/task/add");
 
         if (commands == null) {
             PrintUtils.printError("No commands to add");
@@ -88,7 +89,18 @@ public class Add implements Callable<Integer> {
         }
 
         // Create env file
-        String filePath = workingDir + File.separator + uuid + ".env";
+        String filePath = Constants.utmdCommandsPath + File.separator + uuid + File.separator + ".env";
+        File file = new File(filePath);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            boolean created = parentDir.mkdirs();
+            if (created) {
+                System.out.println("Parent directories created successfully.");
+            } else {
+                System.err.println("Failed to create parent directories.");
+            }
+        }
+
         try (FileWriter writer = new FileWriter(filePath)) {
             Map<String, String> env = System.getenv();
             for (Map.Entry<String, String> entry : env.entrySet()) {

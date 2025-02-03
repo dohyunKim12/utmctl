@@ -4,6 +4,8 @@ import config.Constants;
 import picocli.CommandLine;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
 import static util.ProcessUtils.killProcessByPID;
@@ -26,19 +28,28 @@ public class End implements Callable<Integer> {
                 if (isKilled) {
                     System.out.println("Process with PID " + pid + " has been killed successfully.");
                 } else {
-                    System.out.println("Failed to kill process with PID " + pid + ".");
+                    System.err.println("Failed to kill process with PID " + pid + ".");
                 }
             } else {
-                System.out.println("No valid PID found in the file.");
+                System.err.println("No valid PID found in the file.");
             }
+            // delete tmp file (pid)
+            File pidFile = new File(utmdPidFilePath);
+            Files.write(Paths.get(utmdPidFilePath), new byte[0]);
+            boolean deleted = pidFile.delete();
+            if (!deleted) {
+                System.out.println("Direct deletion failed, trying alternative methods...");
+                ProcessBuilder processBuilder = new ProcessBuilder("rm", "-f", utmdPidFilePath);
+                processBuilder.start().waitFor();
+            }
+            System.out.println("PID file deleted successfully: " + utmdPidFilePath);
         } catch (IOException e) {
-            System.err.println("Error reading the file: " + e.getMessage());
+            System.err.println("Failed to delete PID file: " + e.getMessage());
+            return 1;
         } catch (InterruptedException e) {
             System.err.println("Error while killing the process: " + e.getMessage());
+            return 1;
         }
-
         return 0;
     }
-
-
 }

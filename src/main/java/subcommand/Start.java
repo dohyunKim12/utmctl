@@ -4,8 +4,7 @@ import config.Constants;
 import picocli.CommandLine;
 import util.PrintUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.concurrent.Callable;
 
 import static util.ProcessUtils.*;
@@ -41,6 +40,7 @@ public class Start implements Callable<Integer> {
             pidFile.delete();
         }
 
+
         // Start utmd.py
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
@@ -56,11 +56,39 @@ public class Start implements Callable<Integer> {
                 // Linux/Mac
                 processBuilder.command(
                         "nohup",
-                        "sh", "-c", Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > " + Constants.utmdBinPath + "/utmd.log"  + " 2>&1 &"
+                        "sh", "-c", Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > " + Constants.utmdBinPath + "/utmd.log"  + " 2>&1 & echo $!"
                 );
                 processBuilder.directory(new File(Constants.utmdBinPath));
-                processBuilder.start();
-                System.out.println("UTMD started in background");
+                Process process = processBuilder.start();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String pidStr = reader.readLine();
+                reader.close();
+
+                if (pidStr != null && pidStr.matches("\\d+")) {
+                    long returnedPid = Long.parseLong(pidStr);
+                    System.out.println("UTMD started in background with PID: " + returnedPid);
+
+                    File pidFile = new File(utmdPidFilePath);
+                    File parentDir = pidFile.getParentFile();
+                    if (!parentDir.exists()) {
+                        boolean dirsCreated = parentDir.mkdirs();
+                        if (!dirsCreated) {
+                            System.err.println("Failed to create directories: " + parentDir.getAbsolutePath());
+                            return 1;
+                        }
+                    }
+                    try (FileWriter writer = new FileWriter(pidFile, false)) {
+                        writer.write(String.valueOf(returnedPid));
+                        writer.flush();
+                        System.out.println("PID " + returnedPid + " written to " + utmdPidFilePath);
+                    } catch (IOException e) {
+                        System.err.println("Failed to write PID to file: " + e.getMessage());
+                        return 1;
+                    }
+                } else {
+                    System.out.println("Failed to retrieve PID.");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

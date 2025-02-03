@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static cli.Admin.writeChannel;
+import static util.ProcessUtils.*;
 
 
 @CommandLine.Command(name = "add",
@@ -60,6 +61,12 @@ public class Add implements Callable<Integer> {
     String[] descriptions = null;
     @Override
     public Integer call() throws Exception {
+        // Check UTMD running
+        String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
+        String pid = readPIDFromFile(utmdPidFilePath);
+        if(!isUtmdRunning(pid)) return 1;
+
+
         System.out.println("Trying to put job in UTM ....\n");
         SimpleHttpRequest request = SimpleHttpRequest.create("POST",Constants.utmServerUrl + "/api/task/add");
 
@@ -127,5 +134,27 @@ public class Add implements Callable<Integer> {
         writeChannel(request);
 
         return 0;
+    }
+
+    private boolean isUtmdRunning(String pid) throws IOException {
+        if (pid == null) {
+            System.out.println(PrintUtils.ANSI_BOLD_RED +
+                    "UTMD is not running. Start it using the following command: utmctl start" +
+                    PrintUtils.ANSI_RESET);
+            return false;
+        }
+        if (pid.isEmpty()) {
+            System.out.println(PrintUtils.ANSI_BOLD_RED +
+                    "PID file exists, but no valid PID was found." +
+                    PrintUtils.ANSI_RESET);
+            return false;
+        }
+        if (!isProcessRunning(pid)) {
+            System.out.println(PrintUtils.ANSI_BOLD_RED +
+                    "UTMD not running, check PID: " + pid + " or restart utmd by command: utmctl end & start" +
+                    PrintUtils.ANSI_RESET);
+            return false;
+        }
+        return true;
     }
 }

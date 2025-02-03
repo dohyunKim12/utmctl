@@ -1,7 +1,6 @@
 package cli;
 
 import config.Constants;
-import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
@@ -33,13 +32,13 @@ public class Admin {
             System.exit(0);
         }
 
-        if (Constants.serverIp == null || Constants.utmdBinPath == null || Constants.pythonPath == null) {
+        if (Constants.gtmServerIp == null || Constants.utmdBinPath == null || Constants.utmdPythonPath == null) {
             System.out.println(PrintUtils.ANSI_BOLD_RED+"The following environment variables must be set: \n"+ PrintUtils.ANSI_RESET);
-            System.out.println("[SERVER_IP='IP address for UTM & kafka server'] \n" +
+            System.out.println("[GTM_SERVER_IP='IP address for GTM server'] \n" +
+                    "[GTM_SERVER_PORT='Port for GTM server (default 8023)'] \n" +
                     "[UTMD_BIN_PATH='Binary file path for UTMd'] \n" +
                     "[UTMD_PYTHON_PATH='Path for UTMd python'] \n" +
-                    "[UTM_PORT='Port for UTM server (default: 8023)'] \n" +
-                    "[KAFKA_PORT='Port for Kafka (default: 9092)'] \n");
+                    "[KAFKA_ADDRESS='IP:Port for Kafka (default GTM_SERVER_IP:9092)'] \n");
             System.exit(0);
         }
 

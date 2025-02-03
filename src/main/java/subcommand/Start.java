@@ -1,7 +1,6 @@
 package subcommand;
 
 import config.Constants;
-import config.Global;
 import picocli.CommandLine;
 import util.PrintUtils;
 
@@ -45,9 +44,9 @@ public class Start implements Callable<Integer> {
         // Start utmd.py
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.environment().put("SERVER_IP", Constants.serverIp);
-            processBuilder.environment().put("UTM_PORT", Constants.utmPort);
-            processBuilder.environment().put("KAFKA_PORT", Constants.kafkaPort);
+            processBuilder.environment().put("GTM_SERVER_IP", Constants.gtmServerIp);
+            processBuilder.environment().put("GTM_SERVER_PORT", Constants.gtmServerPort);
+            processBuilder.environment().put("KAFKA_ADDRESS", Constants.kafkaAddress);
             processBuilder.environment().put("TOPIC_NAME", "utm-" + Constants.username);
             if (Constants.os.contains("win")) {
                 // Windows
@@ -57,7 +56,7 @@ public class Start implements Callable<Integer> {
                 // Linux/Mac
                 processBuilder.command(
                         "nohup",
-                        "sh", "-c", Constants.pythonPath + " " + Constants.utmdBinPath + "/utmd.py > " + Constants.utmdBinPath + "/utmd.log"  + " 2>&1 &"
+                        "sh", "-c", Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > " + Constants.utmdBinPath + "/utmd.log"  + " 2>&1 &"
                 );
                 processBuilder.directory(new File(Constants.utmdBinPath));
                 processBuilder.start();

@@ -59,14 +59,14 @@ public class Add implements Callable<Integer> {
     String[] descriptions = null;
     @Override
     public Integer call() throws Exception {
-        // Check UTMD running
+        // Check utmd running
         String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
         String pid = readPIDFromFile(utmdPidFilePath);
         if(!isUtmdRunning(pid)) return 1;
 
 
-        System.out.println("Trying to put job in UTM ....\n");
-        SimpleHttpRequest request = SimpleHttpRequest.create("POST",Constants.utmServerUrl + "/api/task/add");
+        System.out.println("Trying to put task in GTM ....\n");
+        SimpleHttpRequest request = SimpleHttpRequest.create("POST",Constants.gtmServerUrl + "/api/task/add");
 
         if (commands == null) {
             PrintUtils.printError("No commands to add");

@@ -49,8 +49,8 @@ public class Admin {
             System.out.println(PrintUtils.ANSI_BOLD_RED+"The following environment variables must be set: \n"+ PrintUtils.ANSI_RESET);
             System.out.println("[GTM_SERVER_IP='IP address for GTM server'] \n" +
                     "[GTM_SERVER_PORT='Port for GTM server (default 8023)'] \n" +
-                    "[UTMD_BIN_PATH='Binary file path for UTMd'] \n" +
-                    "[UTMD_PYTHON_PATH='Path for UTMd python'] \n" +
+                    "[UTMD_BIN_PATH='Binary file path for utmd'] \n" +
+                    "[UTMD_PYTHON_PATH='Path for utmd python'] \n" +
                     "[KAFKA_ADDRESS='IP:Port for Kafka (default GTM_SERVER_IP:9092)'] \n");
             System.exit(0);
         }

@@ -14,21 +14,21 @@ import static cli.Admin.writeChannel;
 
 
 @CommandLine.Command(name = "cancel",
-        description = "Cancel task from UTM or Local")
+        description = "Cancel pending/running task from GTM & utmd")
 public class Cancel implements Callable<Integer> {
-    @CommandLine.Parameters(arity = "1..*", paramLabel = "JOB_ID_LIST", description = "Job id from UTM add response")
-    String[] jobId;
+    @CommandLine.Parameters(arity = "1..*", paramLabel = "TASK_ID_LIST", description = "Task id from UTM add response")
+    String[] taskId;
     @Override
     public Integer call() throws Exception {
-        System.out.println("Trying to cancel job from UTM ....\n");
-        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Constants.utmServerUrl + "/api/task/cancel");
+        System.out.println("Trying to cancel task from UTM ....\n");
+        SimpleHttpRequest request = SimpleHttpRequest.create("POST", Constants.gtmServerUrl + "/api/task/cancel");
 
         JsonObject body = new JsonObject();
-        JsonArray jobIdList = new JsonArray();
-        for (String jobId : jobId) {
-            jobIdList.add(jobId);
+        JsonArray taskIdList = new JsonArray();
+        for (String tid : taskId) {
+            taskIdList.add(tid);
         }
-        body.add("task_id_list", jobIdList);
+        body.add("task_id_list", taskIdList);
         body.addProperty("user", Constants.username);
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
         Global.getInstance().setCaller(Global.ActionType.CANCEL);

@@ -1,7 +1,6 @@
 package subcommand;
 
 import config.Constants;
-import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import picocli.CommandLine;
 
@@ -14,11 +13,11 @@ import java.util.jar.Manifest;
 import static cli.Admin.writeChannel;
 
 @CommandLine.Command(name = "version",
-        description = "Display the UTM-client and UTM-server version information")
+        description = "Display the UTM-client and GTM-server version information")
 public class Version implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
-        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Constants.utmServerUrl + "/api/version");
+        SimpleHttpRequest request = SimpleHttpRequest.create("GET", Constants.gtmServerUrl + "/api/version");
         StringBuilder stb = new StringBuilder();
         try {
             Manifest manifest = this.getManifest();

@@ -30,48 +30,36 @@ public class Manual implements Callable<Integer> {
 
             switch(subcommand) {
                 case "start":
-                    System.out.println("Need to start utmd before run utmctl add command\n");
-                    System.out.println("Utmd watching kafka queue & will execute srun command in each thread simultaneously\n");
                     break;
                 case "add":
                     System.out.println("Examples");
-                    System.out.println("  # Add all worker status");
-                    System.out.println("  get worker\n");
-                    System.out.println("  # List all application status");
-                    System.out.println("  get application | app\n");
-                    System.out.println("  # List all controller status");
-                    System.out.println("  get controller | cont\n");
-                    System.out.println("  # List all service status");
-                    System.out.println("  get service | svc\n");
+                    System.out.println("  # Add srun command to the TaskManager");
+                    System.out.println("  add srun commands ... \n");
+                    System.out.println("  # Add srun command with sleep 10 sec, using 2 license primesim, and timeout in 1 min");
+                    System.out.println("  add srun -t1 -l primesim:2 sleep 10\n");
+                    System.out.println("  # Add srun command with 2 requested cpu, timeout in 30 min, and other commands");
+                    System.out.println("  add srun -c2 -t30 -l primesim:2 sleep 1\n");
                     break;
                 case "cancel":
                     System.out.println("Examples");
-                    System.out.println("  # Upload application and not deploy");
-                    System.out.println("  upload application | app [file]\n");
-                    System.out.println("  # Upload application with specified app name");
-                    System.out.println("  upload app -n [app_name] [file]\n");
+                    System.out.println("  # Cancel 1 task by task_id, you can retrieve task_id by get command");
+                    System.out.println("  cancel 13\n");
+                    System.out.println("  # Cancel many task by task_id_list");
+                    System.out.println("  cancel 13, 14, 15\n");
                     break;
                 case "get":
                     System.out.println("Examples");
-                    System.out.println("  # Upload application and not deploy");
-                    System.out.println("  upload application | app [file]\n");
-                    System.out.println("  # Upload application with specified app name");
-                    System.out.println("  upload app -n [app_name] [file]\n");
+                    System.out.println("  # Get task by username");
+                    System.out.println("  get username\n");
                     break;
                 case "describe":
                     System.out.println("Examples");
-                    System.out.println("  # Upload application and not deploy");
-                    System.out.println("  upload application | app [file]\n");
-                    System.out.println("  # Upload application with specified app name");
-                    System.out.println("  upload app -n [app_name] [file]\n");
+                    System.out.println("  # Describe task by task_id");
+                    System.out.println("  describe 15\n");
                     break;
                 case "end":
-                    System.out.println("Examples");
-                    System.out.println("  # Undeploy controller");
-                    System.out.println("  undeploy controller | cont [cont_name]\n");
                     break;
                 case "version":
-                    System.out.println("Display the UTM-client and GTM-server version information\n");
                     break;
             }
         }

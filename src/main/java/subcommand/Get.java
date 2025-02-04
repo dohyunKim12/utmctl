@@ -26,7 +26,7 @@ public class Get implements Callable<Integer> {
     public Integer call() throws Exception {
         System.out.println("Trying to find task list assigned by user " + user + " from UTM ....\n");
 
-        String url = Constants.utmServerUrl + "/api/task/list/" + user;
+        String url = Constants.gtmServerUrl + "/api/task/list/" + user;
         if(status != null) {
             url += "?status=" + status;
         }

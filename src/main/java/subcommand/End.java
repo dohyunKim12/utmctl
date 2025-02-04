@@ -8,8 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
-import static util.ProcessUtils.killProcessByPID;
-import static util.ProcessUtils.readPIDFromFile;
+import static util.ProcessUtils.*;
 
 
 @CommandLine.Command(name = "end",
@@ -26,23 +25,31 @@ public class End implements Callable<Integer> {
             if (pid != null && !pid.isEmpty()) {
                 boolean isKilled = killProcessByPID(pid);
                 if (isKilled) {
-                    System.out.println("Process with PID " + pid + " has been killed successfully.");
+                    System.out.println("Process with PID " + pid + " has been terminated successfully.");
                 } else {
-                    System.err.println("Failed to kill process with PID " + pid + ".");
+                    System.err.println("Failed to terminate process with PID " + pid + ".");
+                    System.out.println("Try to kill process with PID " + pid + ".");
+                    killForcefullyByPID(pid);
                 }
             } else {
                 System.err.println("No valid PID found in the file.");
             }
             // delete tmp file (pid)
             File pidFile = new File(utmdPidFilePath);
-            Files.write(Paths.get(utmdPidFilePath), new byte[0]);
-            boolean deleted = pidFile.delete();
-            if (!deleted) {
-                System.out.println("Direct deletion failed, trying alternative methods...");
-                ProcessBuilder processBuilder = new ProcessBuilder("rm", "-f", utmdPidFilePath);
-                processBuilder.start().waitFor();
+            if (!pidFile.exists()) {
+                System.out.println("PID file does not exist.");
+            } else {
+                Files.write(Paths.get(utmdPidFilePath), new byte[0]);
+                boolean deleted = pidFile.delete();
+                if (deleted) {
+                    System.out.println("PID file deleted successfully: " + utmdPidFilePath);
+                }
+                else {
+                    System.out.println("Direct deletion failed, trying alternative methods...");
+                    ProcessBuilder processBuilder = new ProcessBuilder("rm", "-f", utmdPidFilePath);
+                    processBuilder.start().waitFor();
+                }
             }
-            System.out.println("PID file deleted successfully: " + utmdPidFilePath);
         } catch (IOException e) {
             System.err.println("Failed to delete PID file: " + e.getMessage());
             return 1;

@@ -11,7 +11,10 @@ import static util.ProcessUtils.*;
 
 
 @CommandLine.Command(name = "start",
-        description = "Start UTM daemon")
+        description = "Start UTM daemon\n" +
+                "Need to start utmd for each user before run utmctl add command\n" +
+                "Utmd watching kafka queue & will execute srun command in each thread simultaneously\n"
+)
 public class Start implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
@@ -56,8 +59,9 @@ public class Start implements Callable<Integer> {
                 // Linux/Mac
                 processBuilder.command(
                         "nohup",
-                        "sh", "-c", Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > " + Constants.utmdBinPath + "/utmd.log"  + " 2>&1 & echo $!"
+                        "sh", "-c", Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > /dev/null 2>&1 & echo $!"
                 );
+
                 processBuilder.directory(new File(Constants.utmdBinPath));
                 Process process = processBuilder.start();
 

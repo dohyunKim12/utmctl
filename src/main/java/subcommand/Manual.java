@@ -29,9 +29,13 @@ public class Manual implements Callable<Integer> {
             entry.getValue().usage(new PrintWriter(System.out));
 
             switch(subcommand) {
+                case "start":
+                    System.out.println("Need to start utmd before run utmctl add command\n");
+                    System.out.println("Utmd watching kafka queue & will execute srun command in each thread simultaneously\n");
+                    break;
                 case "add":
                     System.out.println("Examples");
-                    System.out.println("  # List all worker status");
+                    System.out.println("  # Add all worker status");
                     System.out.println("  get worker\n");
                     System.out.println("  # List all application status");
                     System.out.println("  get application | app\n");
@@ -47,17 +51,27 @@ public class Manual implements Callable<Integer> {
                     System.out.println("  # Upload application with specified app name");
                     System.out.println("  upload app -n [app_name] [file]\n");
                     break;
-                case "start":
+                case "get":
                     System.out.println("Examples");
-                    System.out.println("  # Deploy application to specified worker-pool");
-                    System.out.println("  Deploy application | app [app_name] -p [worker-pool]\n");
-                    System.out.println("  # Deploy controller to specified worker-pool");
-                    System.out.println("  start controller | cont [cont_name] -p [worker-pool]\n");
+                    System.out.println("  # Upload application and not deploy");
+                    System.out.println("  upload application | app [file]\n");
+                    System.out.println("  # Upload application with specified app name");
+                    System.out.println("  upload app -n [app_name] [file]\n");
+                    break;
+                case "describe":
+                    System.out.println("Examples");
+                    System.out.println("  # Upload application and not deploy");
+                    System.out.println("  upload application | app [file]\n");
+                    System.out.println("  # Upload application with specified app name");
+                    System.out.println("  upload app -n [app_name] [file]\n");
                     break;
                 case "end":
                     System.out.println("Examples");
                     System.out.println("  # Undeploy controller");
                     System.out.println("  undeploy controller | cont [cont_name]\n");
+                    break;
+                case "version":
+                    System.out.println("Display the UTM-client and GTM-server version information\n");
                     break;
             }
         }

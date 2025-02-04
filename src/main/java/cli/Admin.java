@@ -32,6 +32,19 @@ public class Admin {
             System.exit(0);
         }
 
+        List<String> helpCmd = new ArrayList<>();
+        helpCmd.add("help");
+        helpCmd.add("--help");
+        helpCmd.add("-help");
+        helpCmd.add("--h");
+        helpCmd.add("-h");
+        helpCmd.add("man");
+
+        if(helpCmd.contains(args[0])) {
+            cmd.execute("man");
+            System.exit(0);
+        }
+
         if (Constants.gtmServerIp == null || Constants.utmdBinPath == null || Constants.utmdPythonPath == null) {
             System.out.println(PrintUtils.ANSI_BOLD_RED+"The following environment variables must be set: \n"+ PrintUtils.ANSI_RESET);
             System.out.println("[GTM_SERVER_IP='IP address for GTM server'] \n" +
@@ -39,18 +52,6 @@ public class Admin {
                     "[UTMD_BIN_PATH='Binary file path for UTMd'] \n" +
                     "[UTMD_PYTHON_PATH='Path for UTMd python'] \n" +
                     "[KAFKA_ADDRESS='IP:Port for Kafka (default GTM_SERVER_IP:9092)'] \n");
-            System.exit(0);
-        }
-
-        List<String> helpCmd = new ArrayList<>();
-        helpCmd.add("help");
-        helpCmd.add("--help");
-        helpCmd.add("-help");
-        helpCmd.add("--h");
-        helpCmd.add("-h");
-
-        if(helpCmd.contains(args[0])) {
-            cmd.execute("man");
             System.exit(0);
         }
 

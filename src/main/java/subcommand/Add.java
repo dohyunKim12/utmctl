@@ -11,10 +11,8 @@ import util.PrintUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +23,7 @@ import static util.ProcessUtils.*;
 
 
 @CommandLine.Command(name = "add",
-        description = "Add task to TM")
+        description = "Add srun task to GTM")
 public class Add implements Callable<Integer> {
     @CommandLine.Parameters(
             arity = "0",
@@ -85,7 +83,15 @@ public class Add implements Callable<Integer> {
                 .collect(Collectors.joining(" ")) : null;
         String username = System.getProperty("user.name");
         String workingDir = System.getProperty("user.dir");
-        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
+
+        long currentTimeMillis = System.currentTimeMillis();
+        Date now = new Date(currentTimeMillis);
+        TimeZone defaultTimeZone = TimeZone.getDefault();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setTimeZone(defaultTimeZone);
+        String dateString = dateFormat.format(now);
+
+        String timestamp = String.valueOf(currentTimeMillis / 1000);
         String uuid = timestamp + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 
         Pattern pattern = Pattern.compile("-c(\\d+)");
@@ -96,7 +102,7 @@ public class Add implements Callable<Integer> {
         }
 
         // Create env file
-        String filePath = Constants.utmdCommandsPath + File.separator + uuid + File.separator + ".env";
+        String filePath = Constants.utmdCommandsPath + File.separator + dateString + File.separator + uuid + File.separator + ".env";
         File file = new File(filePath);
         File parentDir = file.getParentFile();
         if (parentDir != null && !parentDir.exists()) {

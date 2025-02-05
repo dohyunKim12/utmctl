@@ -43,7 +43,6 @@ public class Start implements Callable<Integer> {
             pidFile.delete();
         }
 
-
         // Start utmd.py
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
@@ -57,42 +56,23 @@ public class Start implements Callable<Integer> {
                 return 1;
             } else {
                 // Linux/Mac
-                processBuilder.command(
-                        "nohup",
-                        "sh", "-c", Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > /dev/null 2>&1 & echo $!"
-                );
-
-                processBuilder.directory(new File(Constants.utmdBinPath));
-                Process process = processBuilder.start();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String pidStr = reader.readLine();
-                reader.close();
-
-                if (pidStr != null && pidStr.matches("\\d+")) {
-                    long returnedPid = Long.parseLong(pidStr);
-                    System.out.println("UTMD started in background with PID: " + returnedPid);
-
-                    File pidFile = new File(utmdPidFilePath);
-                    File parentDir = pidFile.getParentFile();
-                    if (!parentDir.exists()) {
-                        boolean dirsCreated = parentDir.mkdirs();
-                        if (!dirsCreated) {
-                            System.err.println("Failed to create directories: " + parentDir.getAbsolutePath());
-                            return 1;
-                        }
-                    }
-                    try (FileWriter writer = new FileWriter(pidFile, false)) {
-                        writer.write(String.valueOf(returnedPid));
-                        writer.flush();
-                        System.out.println("PID " + returnedPid + " written to " + utmdPidFilePath);
-                    } catch (IOException e) {
-                        System.err.println("Failed to write PID to file: " + e.getMessage());
+                File pidFile = new File(utmdPidFilePath);
+                File parentDir = pidFile.getParentFile();
+                if (!parentDir.exists()) {
+                    boolean dirsCreated = parentDir.mkdirs();
+                    if (!dirsCreated) {
+                        System.err.println("Failed to create directories: " + parentDir.getAbsolutePath());
                         return 1;
                     }
-                } else {
-                    System.out.println("Failed to retrieve PID.");
                 }
+
+                processBuilder.command(
+                        "sh", "-c",
+                        "nohup " + Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > /dev/null 2>&1 & echo $! > " + utmdPidFilePath
+                );
+                processBuilder.directory(new File(Constants.utmdBinPath));
+                processBuilder.start();
+                System.out.println("UTMD started successfully. PID will be recorded in: " + utmdPidFilePath);
             }
         } catch (IOException e) {
             e.printStackTrace();

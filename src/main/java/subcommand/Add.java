@@ -94,9 +94,9 @@ public class Add implements Callable<Integer> {
         String timestamp = String.valueOf(currentTimeMillis / 1000);
         String uuid = timestamp + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 
-        Pattern pattern = Pattern.compile("-c(\\d+)");
+        Pattern pattern = Pattern.compile("-c\\s*(\\d+)");
         Matcher matcher = pattern.matcher(command);
-        int cpu = 0;
+        int cpu = 1;
         if (matcher.find()) {
             cpu = Integer.parseInt(matcher.group(1));
         }

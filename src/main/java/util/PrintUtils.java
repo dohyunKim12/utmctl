@@ -7,11 +7,10 @@ import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class PrintUtils {
-    public static String shortCmdRegex = "srun\\b(?:\\s+-\\w+\\s+\\S+)*\\s+(\\S+)";
+    public static String shortCmdRegex = "srun\\b(?:\\s+-{1,2}\\S+\\s+\\S+)*\\s+(\\S+)";
     public  static Pattern shortCmdPattern = Pattern.compile(shortCmdRegex);
 
     public static final String ANSI_RESET = "\u001B[0m";
@@ -53,7 +52,8 @@ public class PrintUtils {
                     taskDescriber.describe(taskDto);
                     break;
                 case CANCEL:
-                    printlnGreen("Task successfully canceled. " + responseMessage);
+                    System.out.print(PrintUtils.ANSI_BOLD_GREEN+"Response from TaskManager: "+ PrintUtils.ANSI_RESET);
+                    System.out.println(responseMessage);
                     break;
             }
         } else {

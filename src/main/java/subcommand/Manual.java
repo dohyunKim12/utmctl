@@ -49,8 +49,12 @@ public class Manual implements Callable<Integer> {
                     break;
                 case "get":
                     System.out.println("Examples");
-                    System.out.println("  # Get task by username");
-                    System.out.println("  get username\n");
+                    System.out.println("  # Get task by current user");
+                    System.out.println("  get\n");
+                    System.out.println("  # Get task by specified username");
+                    System.out.println("  get -u username\n");
+                    System.out.println("  # Get task by specified status");
+                    System.out.println("  get -s completed\n");
                     break;
                 case "describe":
                     System.out.println("Examples");

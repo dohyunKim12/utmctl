@@ -13,8 +13,12 @@ import static cli.Admin.writeChannel;
 @CommandLine.Command(name = "get",
         description = "Get list of user task from UTM")
 public class Get implements Callable<Integer> {
-    @CommandLine.Parameters(index = "0", description = "user")
-    String user;
+    @CommandLine.Option(
+            names = {"-u", "--username"},
+            paramLabel = "USERNAME",
+            description = "Get task list by username (default: current user)"
+    )
+    String user = null;
 
     @CommandLine.Option(
             names = { "-s", "--status"},
@@ -22,8 +26,12 @@ public class Get implements Callable<Integer> {
             description = "Status to filter task"
     )
     String status;
+
     @Override
     public Integer call() throws Exception {
+        if(user == null)  {
+            user = Constants.username;
+        }
         System.out.println("Trying to find task list assigned by user " + user + " from UTM ....\n");
 
         String url = Constants.gtmServerUrl + "/api/task/list/" + user;

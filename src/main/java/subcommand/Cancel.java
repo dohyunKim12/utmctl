@@ -14,7 +14,9 @@ import static cli.Admin.writeChannel;
 
 
 @CommandLine.Command(name = "cancel",
-        description = "Cancel pending/running task from GTM & utmd")
+        description = "Cancel pending/running task from GTM & utmd",
+        mixinStandardHelpOptions = true
+)
 public class Cancel implements Callable<Integer> {
     @CommandLine.Parameters(arity = "1..*", paramLabel = "TASK_ID_LIST", description = "Task id from UTM add response")
     String[] taskId;

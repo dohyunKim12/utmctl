@@ -1,11 +1,6 @@
 package dto;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.regex.Matcher;
-
-import static util.PrintUtils.shortCmdPattern;
 
 public class TaskDto {
     public TaskDto() {}
@@ -22,7 +17,7 @@ public class TaskDto {
     private String directory;
     private String uuid;
     private String command;
-    @Expose(serialize = false, deserialize = false)
+    @SerializedName("short_cmd")
     private String shortCmd;
     private long timeout;
     @SerializedName("requested_cpu")
@@ -156,12 +151,6 @@ public class TaskDto {
     }
 
     public String getShortCmd() {
-        if (shortCmd == null && command != null) {
-            Matcher matcher = shortCmdPattern.matcher(command);
-            if (matcher.find()) {
-                shortCmd = matcher.group(1);
-            }
-        }
         return shortCmd;
     }
 

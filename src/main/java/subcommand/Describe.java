@@ -11,7 +11,9 @@ import static cli.Admin.writeChannel;
 
 
 @CommandLine.Command(name = "describe",
-        description = "Describe task details")
+        description = "Describe task details",
+        mixinStandardHelpOptions = true
+)
 public class Describe implements Callable<Integer> {
     @CommandLine.Parameters(index = "0", description = "Task ID")
     String taskId;

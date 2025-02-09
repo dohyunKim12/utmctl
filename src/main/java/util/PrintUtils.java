@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class PrintUtils {
-    public static String shortCmdRegex = "srun\\b(?:\\s+-{1,2}\\S+\\s+\\S+)*\\s+(\\S+)";
-    public  static Pattern shortCmdPattern = Pattern.compile(shortCmdRegex);
-
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_MAGENTA = "\u001B[1;95m";
     public static final String ANSI_CYAN = "\u001B[36m";

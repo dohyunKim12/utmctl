@@ -12,7 +12,7 @@ import static util.ProcessUtils.*;
 
 @CommandLine.Command(name = "start",
         description = "Start UTM daemon\n" +
-                "Need to start utmd for each user before run utmctl add command\n" +
+                "Need to start utmd for each user before running utmctl add command\n" +
                 "Utmd watching kafka queue & will execute srun command in each thread simultaneously"
 )
 public class Start implements Callable<Integer> {

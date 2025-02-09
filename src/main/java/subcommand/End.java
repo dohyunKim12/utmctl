@@ -12,8 +12,8 @@ import static util.ProcessUtils.*;
 
 
 @CommandLine.Command(name = "end",
-        description = "End UTM daemon\n" +
-                "process will be terminated & utmd.pid file will be deleted by this command"
+        description = "Terminate the UTM daemon\n" +
+                "This command stops the 'utmd' process and deletes the 'utmd.pid' file"
 )
 public class End implements Callable<Integer> {
     @Override

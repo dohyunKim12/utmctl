@@ -23,7 +23,9 @@ import static util.ProcessUtils.*;
 
 
 @CommandLine.Command(name = "add",
-        description = "Add srun task to GTM")
+        description = "Add srun task to GTM",
+        mixinStandardHelpOptions = true
+)
 public class Add implements Callable<Integer> {
     @CommandLine.Parameters(
             arity = "0",
@@ -72,7 +74,6 @@ public class Add implements Callable<Integer> {
             PrintUtils.printError("No commands to add");
             return 1;
         }
-        String command = "srun -t" + timeout + " " + String.join(" ", commands);
         if(!license.contains(":")) {
             PrintUtils.printError("Invalid license format. ':' character is missing\n [LICENSE_TYPE:LICENSE_COUNT]");
             return 1;
@@ -93,6 +94,7 @@ public class Add implements Callable<Integer> {
 
         String timestamp = String.valueOf(currentTimeMillis / 1000);
         String uuid = timestamp + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        String command = "srun --comment='utm-" + uuid + "' -t" + timeout + " " + String.join(" ", commands);
 
         Pattern pattern = Pattern.compile("-c\\s*(\\d+)");
         Matcher matcher = pattern.matcher(command);

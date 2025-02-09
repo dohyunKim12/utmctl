@@ -15,7 +15,9 @@ import static cli.Admin.writeChannel;
 
 
 @CommandLine.Command(name = "get",
-        description = "Get list of user task from UTM")
+        description = "Get list of user task from UTM",
+        mixinStandardHelpOptions = true
+)
 public class Get implements Callable<Integer> {
     @CommandLine.Option(
             names = {"-u", "--username"},

@@ -13,7 +13,7 @@ import java.util.jar.Manifest;
 import static cli.Admin.writeChannel;
 
 @CommandLine.Command(name = "version",
-        description = "Display the UTM-client and GTM-server version information")
+        description = "Display the UTM-client & GTM-server version information")
 public class Version implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {

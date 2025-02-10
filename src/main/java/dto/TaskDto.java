@@ -19,7 +19,7 @@ public class TaskDto {
     private String command;
     @SerializedName("short_cmd")
     private String shortCmd;
-    private long timeout;
+    private long timelimit;
     @SerializedName("requested_cpu")
     private int cpu;
     private String submit;
@@ -91,12 +91,12 @@ public class TaskDto {
         this.command = command;
     }
 
-    public long getTimeout() {
-        return timeout;
+    public long getTimelimit() {
+        return timelimit;
     }
 
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
+    public void setTimelimit(long timelimit) {
+        this.timelimit = timelimit;
     }
 
     public int getCpu() {

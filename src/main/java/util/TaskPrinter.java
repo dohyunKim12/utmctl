@@ -62,7 +62,7 @@ public class TaskPrinter extends TablePrinter {
         sb.append(ANSI_BOLD_GREEN + "Directory : " + ANSI_RESET).append(response.getDirectory()).append("\n");
         sb.append(ANSI_BOLD_GREEN + "UUID : " + ANSI_RESET).append(response.getUuid()).append("\n");
         sb.append(ANSI_BOLD_GREEN + "Command : " + ANSI_RESET).append(response.getCommand()).append("\n");
-        sb.append(ANSI_BOLD_GREEN + "Timeout(min) : " + ANSI_RESET).append(response.getTimeout()).append("\n");
+        sb.append(ANSI_BOLD_GREEN + "Timelimit(min) : " + ANSI_RESET).append(response.getTimelimit()).append("\n");
         sb.append(ANSI_BOLD_GREEN + "Requested CPU : " + ANSI_RESET).append(response.getCpu()).append("\n");
         sb.append(ANSI_BOLD_GREEN + "Submitted At : " + ANSI_RESET).append(response.getSubmit()).append("\n");
         sb.append(ANSI_BOLD_GREEN + "Started At : " + ANSI_RESET).append(response.getStart()).append("\n");

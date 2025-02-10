@@ -45,12 +45,12 @@ public class Add implements Callable<Integer> {
     String license;
 
     @CommandLine.Option(
-            names = { "-t", "--timeout"},
+            names = { "-t", "--timelimit"},
             required = true,
-            paramLabel = "TIMEOUT",
+            paramLabel = "TIMELIMIT",
             description = "Timeout of task (MINUTES)"
     )
-    Integer timeout = 0;
+    Integer timelimit = 0;
 
     @CommandLine.Option(
             names = { "-d", "--description"},
@@ -94,7 +94,7 @@ public class Add implements Callable<Integer> {
 
         String timestamp = String.valueOf(currentTimeMillis / 1000);
         String uuid = timestamp + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        String command = "srun --comment='utm-" + uuid + "' -t" + timeout + " " + String.join(" ", commands);
+        String command = "srun --comment='utm-" + uuid + "' -t" + timelimit + " " + String.join(" ", commands);
 
         Pattern pattern = Pattern.compile("-c\\s*(\\d+)");
         Matcher matcher = pattern.matcher(command);
@@ -133,7 +133,7 @@ public class Add implements Callable<Integer> {
         body.addProperty("license_count", licenseCount);
         body.addProperty("directory", workingDir);
         body.addProperty("command", command);
-        body.addProperty("timeout", timeout);
+        body.addProperty("timelimit", timelimit);
         body.addProperty("description", description);
         body.addProperty("requested_cpu", cpu);
         body.addProperty("uuid", uuid);

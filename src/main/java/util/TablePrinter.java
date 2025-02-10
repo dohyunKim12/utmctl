@@ -23,7 +23,7 @@ public abstract class TablePrinter {
         maxLengths.put("uuid", 4);
         maxLengths.put("command", 7);
         maxLengths.put("shortCmd", 8);
-        maxLengths.put("timeout", 7);
+        maxLengths.put("timelimit", 9);
         maxLengths.put("cpu", 3);
         maxLengths.put("submit", 6);
         maxLengths.put("start", 5);

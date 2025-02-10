@@ -35,9 +35,9 @@ public class Manual implements Callable<Integer> {
                     System.out.println("Examples");
                     System.out.println("  # Add srun command to the TaskManager");
                     System.out.println("  add srun commands ... \n");
-                    System.out.println("  # Add srun command with sleep 10 sec, using 2 license primesim, and timeout in 1 min");
+                    System.out.println("  # Add srun command with sleep 10 sec, using 2 license primesim, and timelimit in 1 min");
                     System.out.println("  add srun -t1 -l primesim:2 sleep 10\n");
-                    System.out.println("  # Add srun command with 2 requested cpu, timeout in 30 min, and other commands");
+                    System.out.println("  # Add srun command with 2 requested cpu, timelimit in 30 min, and other commands");
                     System.out.println("  add srun -c2 -t30 -l primesim:2 sleep 1\n");
                     break;
                 case "cancel":

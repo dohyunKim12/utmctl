@@ -15,6 +15,7 @@ public abstract class TablePrinter {
 
     private void initializeMaxLengths() {
         maxLengths.put("taskId", 6);
+        maxLengths.put("jobId", 5);
         maxLengths.put("username", 8);
         maxLengths.put("licenseType", 11);
         maxLengths.put("licenseCount", 12);

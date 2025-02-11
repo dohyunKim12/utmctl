@@ -6,6 +6,8 @@ public class TaskDto {
     public TaskDto() {}
     @SerializedName("id")
     private int taskId;
+    @SerializedName("job_id")
+    private int jobId;
     @SerializedName("user")
     private String username;
     private String description;
@@ -151,10 +153,20 @@ public class TaskDto {
     }
 
     public String getShortCmd() {
+        if (shortCmd == null || shortCmd.equals("null") || shortCmd.isEmpty()) {
+            return "-";
+        }
         return shortCmd;
     }
 
     public void setShortCmd(String shortCmd) {
         this.shortCmd = shortCmd;
+    }
+
+    public String getJobId() {
+        if (jobId == -1) {
+            return "-";
+        }
+        return String.valueOf(jobId);
     }
 }

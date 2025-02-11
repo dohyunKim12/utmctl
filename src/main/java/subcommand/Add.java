@@ -93,7 +93,7 @@ public class Add implements Callable<Integer> {
         String dateString = dateFormat.format(now);
 
         String timestamp = String.valueOf(currentTimeMillis / 1000);
-        String uuid = timestamp + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        String uuid = timestamp + "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
         String command = "srun --comment='utm-" + uuid + "' -t" + timelimit + " " + String.join(" ", commands);
 
         Pattern pattern = Pattern.compile("-c\\s*(\\d+)");

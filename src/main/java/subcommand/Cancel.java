@@ -18,7 +18,7 @@ import static cli.Admin.writeChannel;
         mixinStandardHelpOptions = true
 )
 public class Cancel implements Callable<Integer> {
-    @CommandLine.Parameters(arity = "1..*", paramLabel = "TASK_ID_LIST", description = "Task id from UTM add response")
+    @CommandLine.Parameters(arity = "1..*", split = ",", paramLabel = "TASK_ID_LIST", description = "Task id from UTM add response")
     String[] taskId;
     @Override
     public Integer call() throws Exception {

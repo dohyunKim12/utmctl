@@ -26,15 +26,17 @@ public class Version implements Callable<Integer> {
                 Attributes attribute = manifest.getMainAttributes();
                 if (attribute != null) {
                     String version = attribute.getValue("Specification-Version");
+                    String commitHash = attribute.getValue("Git-Commit-Hash");
                     String javaVersion = System.getProperty("java.version");
                     String osName = System.getProperty("os.name");
                     String osArch = System.getProperty("os.arch");
                     String osVersion = System.getProperty("os.version");
 
                     if (version != null) {
-                        stb.append("Version : ").append(version).append(", ");
-                        stb.append("Java : ").append(javaVersion).append(", ");
-                        stb.append("Platform : ").append(osName + "/" + osArch + "/" + osVersion);
+                        stb.append("Version: ").append(version).append(", ");
+                        stb.append("Commit-Hash: ").append(commitHash).append(", ");
+                        stb.append("Java: ").append(javaVersion).append(", ");
+                        stb.append("Platform: ").append(osName + "/" + osArch + "/" + osVersion);
                     }
                 }
                 stb.append(")");

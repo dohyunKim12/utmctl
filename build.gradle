@@ -6,11 +6,17 @@ plugins {
 group = 'com.bos'
 
 def buildVersion = project.findProperty("buildVersion") ?: "0.0.0"
-
-version "${buildVersion}"
 project.buildDir = './bin'
 
 mainClassName = "cli.Admin"
+def gitCommitHash = 'UNKNOWN'
+try {
+    gitCommitHash = 'git rev-parse --short HEAD'.execute().text.trim()
+} catch (Exception ignored) {
+    println "Warning: Unable to retrieve Git commit hash."
+}
+
+version "${buildVersion} (${gitCommitHash})"
 
 repositories {
     mavenCentral()
@@ -27,11 +33,16 @@ dependencies {
 
 
 jar {
+    archiveBaseName.set("utmctl")
+    archiveVersion.set(buildVersion)
+    archiveClassifier.set("")
+
     doFirst {
         manifest {
             attributes 'Main-Class': 'cli.Admin'
             attributes 'Specification-Title': 'User Task Manager Admin'
             attributes 'Specification-Version': "${buildVersion}"
+            attributes 'Git-Commit-Hash': gitCommitHash
         }
     }
     from {

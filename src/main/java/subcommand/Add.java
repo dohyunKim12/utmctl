@@ -7,6 +7,7 @@ import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import picocli.CommandLine;
 import util.PrintUtils;
+import util.ProcessUtils;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -30,7 +31,8 @@ public class Add implements Callable<Integer> {
             paramLabel = "COMMAND",
             description = "SLURM command with arguments (e.g., 'srun -c2 --mem=20G ...')"
     )
-    private String commandsPlaceholder;
+    private String dummy;
+
     @CommandLine.Unmatched
     private List<String> commands;
 
@@ -64,13 +66,13 @@ public class Add implements Callable<Integer> {
             description = "Sync terminal for view interactive slurm process output"
     )
     boolean fg = false;
+
     @Override
     public Integer call() throws Exception {
         // Check utmd running
         String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
         String pid = readPIDFromFile(utmdPidFilePath);
-        if(!isUtmdRunning(pid)) return 1;
-
+        if(!ProcessUtils.isUtmdRunning(pid)) return 1;
 
         System.out.println("Trying to put task in GTM ....\n");
         SimpleHttpRequest request = SimpleHttpRequest.create("POST",Constants.gtmServerUrl + "/api/task/add");
@@ -152,67 +154,6 @@ public class Add implements Callable<Integer> {
             String srunLogFilePath = dirPath + File.separator + "srun.log";
             tailFileUntilEOF(srunLogFilePath);
         }
-
         return 0;
-    }
-
-    private void tailFileUntilEOF(String filePath) throws IOException, InterruptedException {
-        File file = new File(filePath);
-
-        while (!file.exists()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-        }
-        System.out.println("Log file for srun detected: " + filePath);
-
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-            String line;
-            while ((line = raf.readLine()) != null) {
-                System.out.println(line);
-                if (line.trim().equals("===EOF===")) {
-                    return;
-                }
-            }
-            while (true) {
-                while ((line = raf.readLine()) != null) {
-                    System.out.println(line);
-                    if (line.trim().equals("===EOF===")) {
-                        return;
-                    }
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
-        }
-    }
-
-    private boolean isUtmdRunning(String pid) throws IOException {
-        if (pid == null) {
-            System.out.println(PrintUtils.ANSI_BOLD_RED +
-                    "UTMD is not running. Start it using the following command: utmctl start" +
-                    PrintUtils.ANSI_RESET);
-            return false;
-        }
-        if (pid.isEmpty()) {
-            System.out.println(PrintUtils.ANSI_BOLD_RED +
-                    "PID file exists, but no valid PID was found." +
-                    PrintUtils.ANSI_RESET);
-            return false;
-        }
-        if (!isProcessRunning(pid)) {
-            System.out.println(PrintUtils.ANSI_BOLD_RED +
-                    "UTMD not running, check PID: " + pid + " or restart utmd by command: utmctl end & start" +
-                    PrintUtils.ANSI_RESET);
-            return false;
-        }
-        return true;
     }
 }

@@ -66,9 +66,10 @@ public class Start implements Callable<Integer> {
                     }
                 }
 
+                String logFilePath = Constants.utmdBinPath + "/utmd.log";
                 processBuilder.command(
                         "sh", "-c",
-                        "nohup " + Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py > /dev/null 2>&1 & echo $! > " + utmdPidFilePath
+                        "nohup " + Constants.utmdPythonPath + " " + Constants.utmdBinPath + "/utmd.py >> " + logFilePath + " 2>&1 & echo $! > " + utmdPidFilePath
                 );
                 processBuilder.directory(new File(Constants.utmdBinPath));
                 processBuilder.start();

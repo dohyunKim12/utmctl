@@ -46,10 +46,6 @@ public class Start implements Callable<Integer> {
         // Start utmd.py
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.environment().put("GTM_SERVER_IP", Constants.gtmServerIp);
-            processBuilder.environment().put("GTM_SERVER_PORT", Constants.gtmServerPort);
-            processBuilder.environment().put("KAFKA_ADDRESS", Constants.kafkaAddress);
-            processBuilder.environment().put("TOPIC_NAME", "utm-" + Constants.username);
             if (Constants.os.contains("win")) {
                 // Windows
                 PrintUtils.printError("Windows is not supported on this platform");

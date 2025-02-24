@@ -1,6 +1,7 @@
 package util;
 
 import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class ProcessUtils {
     public static String readPIDFromFile(String filePath) throws IOException {
@@ -18,15 +19,31 @@ public class ProcessUtils {
             }
         }
     }
-    public static boolean killProcessByPID(String pid) throws IOException, InterruptedException {
+
+
+
+    public static boolean TerminateProcessByPID(String pid, int timeoutSeconds) throws IOException, InterruptedException {
         Process process = new ProcessBuilder("kill", pid).start();
-        int exitCode = process.waitFor();
-        return exitCode == 0;
+        return process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
     }
     public static boolean killForcefullyByPID(String pid) throws IOException, InterruptedException {
         Process process = new ProcessBuilder("kill", "-9", pid).start();
-        int exitCode = process.waitFor();
-        return exitCode == 0;
+        int result = process.waitFor();
+        switch (result) {
+            case 0:
+                System.out.println("Process with PID " + pid + " has been killed successfully.");
+                break;
+            case 1:
+                System.err.println("Authorization error. Failed to kill process with PID " + pid + ".");
+                break;
+            case 64:
+                System.err.println("Failed to kill process with PID " + pid + ". No such process.");
+                break;
+            default:
+                System.err.println("Unknown error occurred while killing the process with PID " + pid + ".");
+                break;
+        }
+        return result == 0;
     }
     public static boolean isProcessRunning(String pid) throws IOException {
         Process process = new ProcessBuilder("ps", "-p", pid).start();

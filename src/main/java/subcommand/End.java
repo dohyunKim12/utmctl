@@ -25,7 +25,7 @@ public class End implements Callable<Integer> {
             String pid = readPIDFromFile(utmdPidFilePath);
 
             if (pid != null && !pid.isEmpty()) {
-                boolean isKilled = killProcessByPID(pid);
+                boolean isKilled = TerminateProcessByPID(pid, 5);
                 if (isKilled) {
                     System.out.println("Process with PID " + pid + " has been terminated successfully.");
                 } else {

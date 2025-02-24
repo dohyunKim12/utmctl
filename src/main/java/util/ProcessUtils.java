@@ -12,16 +12,14 @@ public class ProcessUtils {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
-            return reader.readLine();
+            String pid = reader.readLine();
+            return pid;
         } finally {
             if (reader != null) {
                 reader.close();
             }
         }
     }
-
-
-
     public static boolean TerminateProcessByPID(String pid, int timeoutSeconds) throws IOException, InterruptedException {
         Process process = new ProcessBuilder("kill", pid).start();
         return process.waitFor(timeoutSeconds, TimeUnit.SECONDS);

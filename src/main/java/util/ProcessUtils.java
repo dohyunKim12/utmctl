@@ -1,6 +1,8 @@
 package util;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 public class ProcessUtils {
@@ -54,6 +56,11 @@ public class ProcessUtils {
             }
         }
         return false;
+    }
+    public static boolean deleteFile(String filePath) throws IOException {
+        File pidFile = new File(filePath);
+        Files.write(Paths.get(filePath), new byte[0]);
+        return pidFile.delete();
     }
 
 }

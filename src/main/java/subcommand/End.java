@@ -27,11 +27,20 @@ public class End implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        System.out.println("Finishing utmd ....");
-        // Process terminate (read utmd pid from utmd pid file)
-        String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
         try {
+            String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
             String pid = readPIDFromFile(utmdPidFilePath);
+            if (pid == null || pid.isEmpty()) {
+                System.out.println("No PID found in the file.");
+                deleteFile(utmdPidFilePath);
+                return 0;
+            }
+            if(!isProcessRunning(pid)) {
+                System.out.println("UTMD is not running.");
+                deleteFile(utmdPidFilePath);
+                return 0;
+            }
+
             if (!force) {
                 // if utmd subprocesses running, return
                 UdsDto udsDto = SocketUtils.sendRequest("count_running");
@@ -50,35 +59,16 @@ public class End implements Callable<Integer> {
                 }
             }
 
-            if (pid != null && !pid.isEmpty()) {
-                boolean isKilled = TerminateProcessByPID(pid, 5);
-                if (isKilled) {
-                    System.out.println("Process with PID " + pid + " has been terminated successfully.");
-                } else {
-                    System.err.println("Failed to terminate process with PID " + pid + ".");
-                    System.out.println("Try to kill process forcefully with PID " + pid + ".");
-                    killForcefullyByPID(pid);
-                }
+            System.out.println("Terminating utmd process with PID " + pid + " ....");
+            boolean isKilled = TerminateProcessByPID(pid, 10);
+            if (isKilled) {
+                System.out.println("Process with PID " + pid + " has been terminated successfully.");
             } else {
-                System.err.println("No valid PID found in the file.");
+                System.err.println("Failed to terminate process with PID " + pid + ".");
+                System.out.println("Kill process forcefully with PID " + pid + ".");
+                killForcefullyByPID(pid);
             }
-
-            // delete tmp file (pid)
-            File pidFile = new File(utmdPidFilePath);
-            if (!pidFile.exists()) {
-                System.out.println("PID file does not exist.");
-            } else {
-                Files.write(Paths.get(utmdPidFilePath), new byte[0]);
-                boolean deleted = pidFile.delete();
-                if (deleted) {
-                    System.out.println("PID file deleted successfully: " + utmdPidFilePath);
-                }
-                else {
-                    System.out.println("Direct deletion failed, trying alternative methods...");
-                    ProcessBuilder processBuilder = new ProcessBuilder("rm", "-f", utmdPidFilePath);
-                    processBuilder.start().waitFor();
-                }
-            }
+            deleteFile(utmdPidFilePath);
         } catch (IOException e) {
             System.err.println("Failed to delete PID file: " + e.getMessage());
             return 1;

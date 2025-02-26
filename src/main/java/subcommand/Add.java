@@ -1,24 +1,24 @@
 package subcommand;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import config.Constants;
 import config.Global;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import picocli.CommandLine;
-import util.PrintUtils;
-import util.TimeUnitConverter;
+import util.*;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static cli.Admin.writeChannel;
+import static config.Constants.*;
 import static util.ProcessUtils.*;
 
 
@@ -27,6 +27,9 @@ import static util.ProcessUtils.*;
         mixinStandardHelpOptions = true
 )
 public class Add implements Callable<Integer> {
+    @CommandLine.Spec
+    CommandLine.Model.CommandSpec spec;
+
     @CommandLine.Parameters(
             arity = "0",
             paramLabel = "COMMAND",
@@ -38,7 +41,6 @@ public class Add implements Callable<Integer> {
 
     @CommandLine.Option(
             names = { "-l", "--license"},
-            required = true,
             paramLabel = "LICENSE_TYPE:COUNT",
             description = "LICENSE_TYPE:COUNT Number of license to be need"
     )
@@ -73,15 +75,40 @@ public class Add implements Callable<Integer> {
             description = "Sync terminal for view interactive slurm process output"
     )
     boolean fg = false;
+
+    @CommandLine.Option(
+            names = { "-f", "--file"},
+            paramLabel = "FILE_PATH",
+            description = "File input for add batch task",
+            converter = util.PathConverter.class
+    )
+    Path filePath = null;
+
     @Override
     public Integer call() throws Exception {
+        validateOptions();
         // Check utmd running
-        String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
-        String pid = readPIDFromFile(utmdPidFilePath);
-        if(!isUtmdRunning(pid)) return 1;
+        if (!test) {
+            String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
+            String pid = readPIDFromFile(utmdPidFilePath);
+            if(!isUtmdRunning(pid)) return 1;
+        }
+
+        if (timeUnit != TimeUnit.MINUTES) {
+            timelimit = (int) timeUnit.toMinutes(timelimit);
+        }
 
         System.out.println("Trying to put task in GTM ....\n");
         SimpleHttpRequest request = SimpleHttpRequest.create("POST",Constants.gtmServerUrl + "/api/task/add");
+
+        if (filePath != null) {
+            // Batch mode
+            JsonArray ja = makePayloadFromFile(filePath);
+            request.setBody(ja.toString(), ContentType.APPLICATION_JSON);
+            Global.getInstance().setCaller(Global.ActionType.ADDBATCH);
+            writeChannel(request);
+            return 0;
+        }
 
         if (commands == null) {
             PrintUtils.printError("No commands to add");
@@ -91,58 +118,25 @@ public class Add implements Callable<Integer> {
             PrintUtils.printError("Invalid license format. ':' character is missing\n [LICENSE_TYPE:LICENSE_COUNT]");
             return 1;
         }
+
         String licenseType = license.split(":")[0];
         int licenseCount = Integer.parseInt(license.split(":")[1]);
         String description = descriptions != null ? Arrays.stream(descriptions)
                 .collect(Collectors.joining(" ")) : null;
-        String username = System.getProperty("user.name");
-        String workingDir = System.getProperty("user.dir");
-
-        long currentTimeMillis = System.currentTimeMillis();
-        Date now = new Date(currentTimeMillis);
-        TimeZone defaultTimeZone = TimeZone.getDefault();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setTimeZone(defaultTimeZone);
-        String dateString = dateFormat.format(now);
-
-        String timestamp = String.valueOf(currentTimeMillis / 1000);
+        String dateString = TimeUtils.generateCurrentDateString();
+        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
         String uuid = timestamp + "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        if (timeUnit != TimeUnit.MINUTES) {
-            timelimit = (int) timeUnit.toMinutes(timelimit);
-        }
 
-        String command = "srun --comment='utm-" + uuid + "' -t" + timelimit + " " + String.join(" ", commands);
+        String command = "srun --comment='utm-" + uuid + "' -t " + timelimit + " " + String.join(" ", commands);
 
-        Pattern pattern = Pattern.compile("-c\\s*(\\d+)");
-        Matcher matcher = pattern.matcher(command);
+        Matcher matcher = CPU_PATTERN.matcher(command);
         int cpu = 1;
         if (matcher.find()) {
             cpu = Integer.parseInt(matcher.group(1));
         }
 
         // Create env file
-        String dirPath = Constants.utmdCommandsPath + File.separator + dateString + File.separator + uuid;
-        String envFilePath = dirPath + File.separator + ".env";
-        File file = new File(envFilePath);
-        File parentDir = file.getParentFile();
-        if (parentDir != null && !parentDir.exists()) {
-            boolean created = parentDir.mkdirs();
-            if (created) {
-                System.out.println("Parent directories created successfully.");
-            } else {
-                System.err.println("Failed to create parent directories.");
-            }
-        }
-
-        try (FileWriter writer = new FileWriter(envFilePath)) {
-            Map<String, String> env = System.getenv();
-            for (Map.Entry<String, String> entry : env.entrySet()) {
-                writer.write(entry.getKey() + "='" + entry.getValue().replaceAll("([\\\\\\n\\'\\\"])", "\\\\$1") + "'\n");
-            }
-            System.out.println("Env values saved in " + envFilePath + " successfully");
-        } catch (IOException e) {
-            System.err.println("Error occurred while writing env file " + e.getMessage());
-        }
+        FileUtils.createEnvFile(dateString, uuid);
 
         // Write Message
         JsonObject body = new JsonObject();
@@ -161,11 +155,73 @@ public class Add implements Callable<Integer> {
 
         if (fg) {
             // sync until srun.log EOF
+            String dirPath = Constants.utmdCommandsPath + File.separator + dateString + File.separator + uuid;
             String srunLogFilePath = dirPath + File.separator + "srun.log";
             tailFileUntilEOF(srunLogFilePath);
         }
 
         return 0;
+    }
+
+    private void validateOptions() {
+        if(filePath == null && (license == null || license.isEmpty())) {
+            throw new CommandLine.ParameterException(spec.commandLine(),
+                    "Error: Either '--file' (-f) must be specified or '--license' (-l) must be provided.");
+        }
+    }
+
+    private JsonArray makePayloadFromFile(Path filePath) throws IOException {
+        File file = filePath.toFile();
+        JsonArray ja = new JsonArray();
+
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line;
+        while((line = reader.readLine()) != null) {
+            if(line.trim().isEmpty()) continue;
+            JsonObject jo = parseLineToJson(line);
+            if (jo == null) {
+                throw new RuntimeException("Failed to parse line: " + line);
+            }
+            ja.add(jo);
+        }
+        return ja;
+    }
+
+    private JsonObject parseLineToJson(String line) {
+        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
+        String uuid = timestamp + "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+
+        line = line.trim();
+        String command = null;
+        if (line.startsWith("srun ")) {
+            command =  line.substring(5).trim();
+        }
+        command.replaceAll("-t\\s*\\d+", "").trim();
+
+        command = "srun --comment='utm-" + uuid + "' -t " + timelimit + " " + command;
+        Matcher cpuMatcher = CPU_PATTERN.matcher(command);
+        int cpu = 1;
+        if (cpuMatcher.find()) {
+            cpu = Integer.parseInt(cpuMatcher.group(1));
+        }
+        Matcher licenseMatcher = LICENSE_PATTERN.matcher(command);
+        if (!licenseMatcher.find()) {
+            PrintUtils.printError("License not found in command: " + command);
+            return null;
+        }
+        String licenseType = licenseMatcher.group(1);
+        int licenseCount = Integer.parseInt(licenseMatcher.group(2));
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("user", username);
+        jsonObject.addProperty("license_type", licenseType);
+        jsonObject.addProperty("license_count", licenseCount);
+        jsonObject.addProperty("directory", workingDir);
+        jsonObject.addProperty("command", command);
+        jsonObject.addProperty("timelimit", timelimit);
+        jsonObject.addProperty("requested_cpu", cpu);
+        jsonObject.addProperty("uuid", uuid);
+        return jsonObject;
     }
 
     private void tailFileUntilEOF(String filePath) throws IOException, InterruptedException {

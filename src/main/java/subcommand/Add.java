@@ -8,9 +8,7 @@ import org.apache.hc.core5.http.ContentType;
 import picocli.CommandLine;
 import util.PrintUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -59,6 +57,13 @@ public class Add implements Callable<Integer> {
             description = "Description of Task\n"
     )
     String[] descriptions = null;
+
+    @CommandLine.Option(
+            names = { "-fg", "--foreground"},
+            paramLabel = "FOREGROUND",
+            description = "Sync terminal for view interactive slurm process output"
+    )
+    boolean fg = false;
     @Override
     public Integer call() throws Exception {
         // Check utmd running
@@ -104,8 +109,9 @@ public class Add implements Callable<Integer> {
         }
 
         // Create env file
-        String filePath = Constants.utmdCommandsPath + File.separator + dateString + File.separator + uuid + File.separator + ".env";
-        File file = new File(filePath);
+        String dirPath = Constants.utmdCommandsPath + File.separator + dateString + File.separator + uuid;
+        String envFilePath = dirPath + File.separator + ".env";
+        File file = new File(envFilePath);
         File parentDir = file.getParentFile();
         if (parentDir != null && !parentDir.exists()) {
             boolean created = parentDir.mkdirs();
@@ -116,12 +122,12 @@ public class Add implements Callable<Integer> {
             }
         }
 
-        try (FileWriter writer = new FileWriter(filePath)) {
+        try (FileWriter writer = new FileWriter(envFilePath)) {
             Map<String, String> env = System.getenv();
             for (Map.Entry<String, String> entry : env.entrySet()) {
                 writer.write(entry.getKey() + "='" + entry.getValue().replaceAll("([\\\\\\n\\'\\\"])", "\\\\$1") + "'\n");
             }
-            System.out.println("Env values saved in " + filePath + " successfully");
+            System.out.println("Env values saved in " + envFilePath + " successfully");
         } catch (IOException e) {
             System.err.println("Error occurred while writing env file " + e.getMessage());
         }
@@ -141,7 +147,51 @@ public class Add implements Callable<Integer> {
         Global.getInstance().setCaller(Global.ActionType.ADD);
         writeChannel(request);
 
+        if (fg) {
+            // sync until srun.log EOF
+            String srunLogFilePath = dirPath + File.separator + "srun.log";
+            tailFileUntilEOF(srunLogFilePath);
+        }
+
         return 0;
+    }
+
+    private void tailFileUntilEOF(String filePath) throws IOException, InterruptedException {
+        File file = new File(filePath);
+
+        while (!file.exists()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+        System.out.println("Log file for srun detected: " + filePath);
+
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+            String line;
+            while ((line = raf.readLine()) != null) {
+                System.out.println(line);
+                if (line.trim().equals("===EOF===")) {
+                    return;
+                }
+            }
+            while (true) {
+                while ((line = raf.readLine()) != null) {
+                    System.out.println(line);
+                    if (line.trim().equals("===EOF===")) {
+                        return;
+                    }
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        }
     }
 
     private boolean isUtmdRunning(String pid) throws IOException {

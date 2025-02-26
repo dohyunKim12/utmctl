@@ -38,6 +38,7 @@ public class TaskPrinter extends TablePrinter {
                 .append(padRightDynamic("CPU", maxLengths.get("cpu")))
                 .append(padRightDynamic("Status", maxLengths.get("status")))
                 .append(padRightDynamic("Directory", maxLengths.get("directory")))
+                .append(padRightDynamic("SubmittedAt", maxLengths.get("submittedAt")))
                 .append(ANSI_RESET).append("\n");
     }
 
@@ -51,6 +52,7 @@ public class TaskPrinter extends TablePrinter {
                     .append(padRightDynamic(String.valueOf(item.getCpu()), maxLengths.get("cpu")))
                     .append(padRightDynamic(item.getStatus(), maxLengths.get("status")))
                     .append(padRightDynamic(item.getDirectory(), maxLengths.get("directory")))
+                    .append(padRightDynamic(item.getSubmit(), maxLengths.get("submittedAt")))
                     .append("\n");
         }
     }

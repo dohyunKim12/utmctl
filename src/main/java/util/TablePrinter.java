@@ -30,6 +30,7 @@ public abstract class TablePrinter {
         maxLengths.put("start", 5);
         maxLengths.put("end", 3);
         maxLengths.put("status", 6);
+        maxLengths.put("submittedAt", 19);
     }
 
     protected abstract void setMaxLengths();

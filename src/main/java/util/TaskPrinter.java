@@ -7,8 +7,6 @@ import dto.TaskDto;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +45,7 @@ public class TaskPrinter extends TablePrinter {
     @Override
     protected void setMaxLengths() {
         for (TaskDto item : taskList) {
+            maxLengths.put("username", Math.max(maxLengths.get("username"), item.getUsername().length()));
             maxLengths.put("shortCmd", Math.max(maxLengths.get("shortCmd"), item.getShortCmd().length()));
             maxLengths.put("license", Math.max(maxLengths.get("license"), item.getLicense().length()));
             maxLengths.put("status", Math.max(maxLengths.get("status"), item.getStatus().length()));
@@ -71,6 +70,7 @@ public class TaskPrinter extends TablePrinter {
         sb.append(ANSI_BOLD_GREEN)
                 .append(padRightDynamic("TaskId", maxLengths.get("taskId")))
                 .append(padRightDynamic("JobId", maxLengths.get("jobId")))
+                .append(padRightDynamic("User", maxLengths.get("username")))
                 .append(padRightDynamic("Command", maxLengths.get("shortCmd")))
                 .append(padRightDynamic("License", maxLengths.get("license")))
                 .append(padRightDynamic("CPU", maxLengths.get("cpu")))
@@ -94,6 +94,7 @@ public class TaskPrinter extends TablePrinter {
         for (TaskDto item : taskList) {
             sb.append(padRightDynamic(String.valueOf(item.getTaskId()), maxLengths.get("taskId")))
                     .append(padRightDynamic(String.valueOf(item.getJobId()), maxLengths.get("jobId")))
+                    .append(padRightDynamic(item.getUsername(), maxLengths.get("username")))
                     .append(padRightDynamic(item.getShortCmd(), maxLengths.get("shortCmd")))
                     .append(padRightDynamic(item.getLicense(), maxLengths.get("license")))
                     .append(padRightDynamic(String.valueOf(item.getCpu()), maxLengths.get("cpu")))

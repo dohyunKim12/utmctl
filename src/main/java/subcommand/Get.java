@@ -24,7 +24,7 @@ public class Get implements Callable<Integer> {
             paramLabel = "USERNAME",
             description = "Get task list by username (default: current user)"
     )
-    String user = null;
+    String user = "all";
 
     @CommandLine.Option(
             names = { "-s", "--status"},
@@ -42,9 +42,6 @@ public class Get implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        if(user == null)  {
-            user = Constants.username;
-        }
         System.out.println("Trying to find task list assigned by user " + user + " from UTM ....\n");
 
         String url = Constants.gtmServerUrl + "/api/task/list/" + user;
@@ -55,6 +52,8 @@ public class Get implements Callable<Integer> {
             statusList.add("running");
             statusList.add("cancelled");
             statusList.add("completed");
+            statusList.add("preempted");
+            statusList.add("failed");
             if(!statusList.contains(status)) {
                 PrintUtils.printError("Invalid status " + status + ". Status must be one of " + statusList);
                 return 1;

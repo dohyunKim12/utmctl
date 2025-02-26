@@ -62,9 +62,7 @@ public class Admin {
         int exitCode = cmd
                 .setCaseInsensitiveEnumValuesAllowed(true)
                 .execute(param.split(" "));
-        if(exitCode != 0) {
-            System.exit(exitCode);
-        }
+        System.exit(exitCode);
     }
 
     public static void writeChannel(SimpleHttpRequest request) {

@@ -30,17 +30,19 @@ public class Start implements Callable<Integer> {
                 System.out.println(PrintUtils.ANSI_BOLD_RED+"UTMD Already running, PID: " + pid + PrintUtils.ANSI_RESET);
                 return 1;
             } else if (!pid.isEmpty()) {
-                boolean isKilled = killForcefullyByPID(pid);
+                System.out.println("Shutting down the previous utmd process with PID " + pid + " ....");
+                boolean isKilled = TerminateProcessByPID(pid, 10);
                 if (isKilled) {
-                    System.out.println("Process with PID " + pid + " has been killed forcefully");
+                    System.out.println("Process with PID " + pid + " has been terminated successfully.");
                 } else {
-                    System.out.println("Failed to kill process with PID " + pid + ".");
+                    System.err.println("Failed to terminate process with PID " + pid + ".");
+                    System.out.println("Try to kill process with PID " + pid + ".");
+                    killForcefullyByPID(pid);
                 }
             } else {
                 System.out.println("No valid PID found in the file.");
             }
-            File pidFile = new File(utmdPidFilePath);
-            pidFile.delete();
+            deleteFile(utmdPidFilePath);
         }
 
         // Start utmd.py

@@ -10,5 +10,6 @@ public class Constants {
     public static String utmdCommandsPath = utmdUserPath + "/commands";
     public static String gtmServerUrl = "http://" + gtmServerIp + ":" + gtmServerPort;
     public static String os = System.getProperty("os.name").toLowerCase();
-    public static String username = System.getProperty("user.name");
+    public static String username = System.getProperty("user.name") == null ? System.getenv("USER") : System.getProperty("user.name");
+    public static final String SOCKET_PATH = "/tmp/utm_uds_" + username;
 }

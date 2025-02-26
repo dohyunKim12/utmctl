@@ -7,11 +7,13 @@ import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import picocli.CommandLine;
 import util.PrintUtils;
+import util.TimeUnitConverter;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -44,11 +46,18 @@ public class Add implements Callable<Integer> {
 
     @CommandLine.Option(
             names = { "-t", "--timelimit"},
-            required = true,
             paramLabel = "TIMELIMIT",
-            description = "Timeout of task (MINUTES)"
+            description = "Timeout of task (MINUTES, default: 1440 min = 24 hours)"
     )
-    Integer timelimit = 0;
+    Integer timelimit = 1440;
+
+    @CommandLine.Option(
+            names = { "-tu", "--timeunit"},
+            paramLabel = "TIMEUNIT",
+            description = "Time unit of time limit (default: MINUTE)",
+            converter = TimeUnitConverter.class
+    )
+    TimeUnit timeUnit = TimeUnit.MINUTES;
 
     @CommandLine.Option(
             names = { "-d", "--description"},
@@ -70,7 +79,6 @@ public class Add implements Callable<Integer> {
         String utmdPidFilePath = Constants.utmdUserPath + "/tmp/utmd.pid";
         String pid = readPIDFromFile(utmdPidFilePath);
         if(!isUtmdRunning(pid)) return 1;
-
 
         System.out.println("Trying to put task in GTM ....\n");
         SimpleHttpRequest request = SimpleHttpRequest.create("POST",Constants.gtmServerUrl + "/api/task/add");
@@ -99,6 +107,10 @@ public class Add implements Callable<Integer> {
 
         String timestamp = String.valueOf(currentTimeMillis / 1000);
         String uuid = timestamp + "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        if (timeUnit != TimeUnit.MINUTES) {
+            timelimit = (int) timeUnit.toMinutes(timelimit);
+        }
+
         String command = "srun --comment='utm-" + uuid + "' -t" + timelimit + " " + String.join(" ", commands);
 
         Pattern pattern = Pattern.compile("-c\\s*(\\d+)");

@@ -33,6 +33,13 @@ public class Get implements Callable<Integer> {
     )
     String status;
 
+    @CommandLine.Option(
+            names = { "-a", "--all"},
+            paramLabel = "ALL",
+            description = "Get all field"
+    )
+    boolean all;
+
     @Override
     public Integer call() throws Exception {
         if(user == null)  {
@@ -56,6 +63,9 @@ public class Get implements Callable<Integer> {
         }
         SimpleHttpRequest request = SimpleHttpRequest.create("GET", url);
         Global.getInstance().setCaller(Global.ActionType.GET);
+        if (all) {
+            Global.getInstance().setFilter(Arrays.asList("taskId", "jobId", "username", "licenseType", "licenseCount", "directory", "uuid", "command", "shortCmd", "timelimit", "cpu", "submit", "start", "end", "status"));
+        }
         writeChannel(request);
 
         return 0;

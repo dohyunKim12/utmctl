@@ -41,7 +41,11 @@ public class PrintUtils {
                         taskDtoList.add(taskDto);
                     }
                     TaskPrinter taskPrinter = new TaskPrinter(taskDtoList);
-                    taskPrinter.print();
+                    if(Global.getInstance().getFilter().size() == 0) {
+                        taskPrinter.print();
+                    } else {
+                        taskPrinter.printFilter();
+                    }
                     break;
                 case DESCRIBE:
                     TaskDto taskDto = gson.fromJson(JsonParser.parseString(responseMessage), TaskDto.class);

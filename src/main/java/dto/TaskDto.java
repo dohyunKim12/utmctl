@@ -163,10 +163,11 @@ public class TaskDto {
         this.shortCmd = shortCmd;
     }
 
-    public String getJobId() {
-        if (jobId == -1) {
-            return "-";
-        }
-        return String.valueOf(jobId);
+    public int getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(int jobId) {
+        this.jobId = jobId;
     }
 }

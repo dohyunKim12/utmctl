@@ -1,9 +1,17 @@
 package config;
 
 
-public class Global {
+import java.util.ArrayList;
+import java.util.List;
 
-    private ActionType caller;
+public class Global {
+    public List<String> getFilter() {
+        return filter;
+    }
+
+    public void setFilter(List<String> filter) {
+        this.filter = filter;
+    }
 
     private static class Holder {
         public static final Global instance = new Global();
@@ -13,6 +21,10 @@ public class Global {
         return Holder.instance;
     }
 
+    private ActionType caller;
+
+    private List<String> filter = new ArrayList<>();
+
     public ActionType getCaller() {
         return caller;
     }
@@ -20,7 +32,6 @@ public class Global {
     public void setCaller(ActionType caller) {
         this.caller = caller;
     }
-
 
     public enum ActionType {
         GET(1),

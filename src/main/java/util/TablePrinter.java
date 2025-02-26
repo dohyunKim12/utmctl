@@ -1,6 +1,7 @@
 package util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class TablePrinter {
@@ -17,11 +18,12 @@ public abstract class TablePrinter {
         maxLengths.put("taskId", 6);
         maxLengths.put("jobId", 5);
         maxLengths.put("username", 8);
+        maxLengths.put("description", 11);
         maxLengths.put("licenseType", 11);
         maxLengths.put("licenseCount", 12);
         maxLengths.put("license", 7);
         maxLengths.put("directory", 9);
-        maxLengths.put("uuid", 4);
+        maxLengths.put("uuid", 19);
         maxLengths.put("command", 7);
         maxLengths.put("shortCmd", 8);
         maxLengths.put("timelimit", 9);
@@ -34,8 +36,11 @@ public abstract class TablePrinter {
     }
 
     protected abstract void setMaxLengths();
+    protected abstract void setFilteredMaxLengths() throws Throwable;
     protected abstract void printHeader();
+    protected abstract void printFilteredHeader();
     protected abstract void printData();
+    protected abstract void printFilteredData() throws Throwable;
 
     public void print() {
         setMaxLengths();
@@ -44,4 +49,14 @@ public abstract class TablePrinter {
         System.out.println(sb);
     }
 
+    public void printFilter() {
+        try {
+            setFilteredMaxLengths();
+            printFilteredHeader();
+            printFilteredData();
+            System.out.println(sb);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
 }

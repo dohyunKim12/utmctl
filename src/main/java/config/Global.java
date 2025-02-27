@@ -28,7 +28,8 @@ public class Global {
         CANCEL(3),
         START(4),
         END(5),
-        DESCRIBE(6);
+        DESCRIBE(6),
+        PROMOTE(7);
 
         private final int value;
         ActionType(int value) { this.value = value; }

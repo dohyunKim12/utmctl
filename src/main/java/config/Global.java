@@ -55,4 +55,17 @@ public class Global {
             throw new IllegalArgumentException("No enum constant with value: " + value);
         }
     }
+
+    public enum TaskStatus {
+        ALL, PENDING, RUNNING, CANCELLED, COMPLETED, FAILED, PREEMPTED;
+        public static TaskStatus fromString(String value) {
+            for (TaskStatus status : TaskStatus.values()) {
+                if (status.name().equalsIgnoreCase(value)) {
+                    return status;
+                }
+            }
+            throw new IllegalArgumentException("Invalid status: " + value + ". Allowed values: all, pending, running, cancelled, completed, failed, preempted.");
+        }
+    }
+
 }

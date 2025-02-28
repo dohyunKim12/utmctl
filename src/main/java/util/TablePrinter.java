@@ -1,7 +1,6 @@
 package util;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class TablePrinter {
@@ -35,26 +34,16 @@ public abstract class TablePrinter {
         maxLengths.put("submittedAt", 19);
     }
 
-    protected abstract void setMaxLengths();
     protected abstract void setFilteredMaxLengths() throws Throwable;
-    protected abstract void printHeader();
     protected abstract void printFilteredHeader();
-    protected abstract void printData();
     protected abstract void printFilteredData() throws Throwable;
-
-    public void print() {
-        setMaxLengths();
-        printHeader();
-        printData();
-        System.out.println(sb);
-    }
 
     public void printFilter() {
         try {
             setFilteredMaxLengths();
             printFilteredHeader();
             printFilteredData();
-            System.out.println(sb);
+            System.out.println(sb.toString().replace("null","-   "));
         } catch (Throwable t) {
             t.printStackTrace();
         }

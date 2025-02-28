@@ -5,7 +5,8 @@ import config.Global;
 import config.Global.TaskStatus;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import picocli.CommandLine;
-import util.PrintUtils;
+import util.TaskField;
+import util.TaskFieldConverter;
 import util.TaskStatusConverter;
 
 import java.io.UnsupportedEncodingException;
@@ -43,11 +44,15 @@ public class Get implements Callable<Integer> {
     List<TaskStatus> statusList = new ArrayList<>(Arrays.asList(TaskStatus.PENDING, TaskStatus.RUNNING));
 
     @CommandLine.Option(
-            names = { "-a", "--all"},
-            paramLabel = "ALL",
-            description = "Get all field"
+            names = { "-f", "--format"},
+            arity = "0..*",
+            paramLabel = "FORMAT",
+            description = "Specify field to print out (all | taskId | jobId | username | licenseType | directory | uuid ...) \n" +
+                    "Multiple values can be separated by comma (,)",
+            converter = TaskFieldConverter.class
     )
-    boolean all;
+    List<String> taskFields = new ArrayList<>(Arrays.asList("taskId", "jobId", "username", "shortCmd", "licenseType",
+            "cpu", "status", "directory", "submit"));
 
     @Override
     public Integer call() throws Exception {
@@ -75,8 +80,10 @@ public class Get implements Callable<Integer> {
         }
         SimpleHttpRequest request = SimpleHttpRequest.create("GET", url);
         Global.getInstance().setCaller(Global.ActionType.GET);
-        if (all) {
-            Global.getInstance().setFilter(Arrays.asList("taskId", "jobId", "username", "licenseType", "licenseCount", "directory", "uuid", "command", "shortCmd", "timelimit", "cpu", "submit", "start", "end", "status"));
+        if (taskFields.contains("all")) {
+            Global.getInstance().setFilter(TaskField.getAllFields());
+        } else {
+            Global.getInstance().setFilter(taskFields);
         }
         writeChannel(request);
 

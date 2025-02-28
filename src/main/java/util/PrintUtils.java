@@ -7,7 +7,6 @@ import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class PrintUtils {
     public static final String ANSI_RESET = "\u001B[0m";
@@ -41,11 +40,7 @@ public class PrintUtils {
                         taskDtoList.add(taskDto);
                     }
                     TaskPrinter taskPrinter = new TaskPrinter(taskDtoList);
-                    if(Global.getInstance().getFilter().size() == 0) {
-                        taskPrinter.print();
-                    } else {
-                        taskPrinter.printFilter();
-                    }
+                    taskPrinter.printFilter();
                     break;
                 case DESCRIBE:
                     TaskDto taskDto = gson.fromJson(JsonParser.parseString(responseMessage), TaskDto.class);
@@ -69,7 +64,7 @@ public class PrintUtils {
 
         String[] lines = json.split("\n");
         for (String line : lines) {
-            sb.append(repeatString(" ", indent)); // Java 1.8 호환 repeat 대체
+            sb.append(repeatString(" ", indent));
             String[] parts = line.split(": ");
             if (parts.length == 2) {
                 sb.append(ANSI_BOLD_PURPLE);

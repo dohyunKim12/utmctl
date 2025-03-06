@@ -30,21 +30,34 @@ public class Add implements Callable<Integer> {
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec;
 
-    @CommandLine.Parameters(
-            arity = "0",
-            paramLabel = "COMMAND",
-            description = "SLURM command with arguments (e.g., 'srun -c2 --mem=20G ...')"
+    @CommandLine.Option(
+            names = { "-c", "--cpu"},
+            paramLabel = "CPU",
+            description = "Requested CPU count (default: 1)"
     )
-    private String commandsPlaceholder;
-    @CommandLine.Unmatched
-    private List<String> commands;
+    Integer cpu = 1;
 
     @CommandLine.Option(
-            names = { "-l", "--license"},
+            names = { "-m", "--mem"},
+            paramLabel = "MEMORY",
+            description = "Requested MEMORY (default: 50MB)",
+            converter = MemoryConverter.class
+    )
+    Integer mem = 50;
+
+    @CommandLine.Option(
+            names = {"-L", "--licenses"},
             paramLabel = "LICENSE_TYPE:COUNT",
             description = "LICENSE_TYPE:COUNT Number of license to be need"
     )
     String license;
+
+    @CommandLine.Option(
+            names = { "-p", "--partition"},
+            paramLabel = "PARTITION",
+            description = "SLURM Partition to execute task (default: shared)"
+    )
+    String partition = "shared";
 
     @CommandLine.Option(
             names = { "-t", "--timelimit"},
@@ -83,6 +96,9 @@ public class Add implements Callable<Integer> {
             converter = util.PathConverter.class
     )
     Path filePath = null;
+
+    @CommandLine.Parameters(paramLabel = "COMMAND", description = "Command and args to execute")
+    List<String> commands = new ArrayList<>();
 
     @Override
     public Integer call() throws Exception {
@@ -127,13 +143,8 @@ public class Add implements Callable<Integer> {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
         String uuid = timestamp + "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 
-        String command = "srun --comment='utm-" + uuid + "' -t " + timelimit + " " + String.join(" ", commands);
-
-        Matcher matcher = CPU_PATTERN.matcher(command);
-        int cpu = 1;
-        if (matcher.find()) {
-            cpu = Integer.parseInt(matcher.group(1));
-        }
+        String command = "srun --comment='utm-" + uuid + "' -c " + cpu + " -m " + mem + " -p " + partition + " -L " + license + " -t " + timelimit +
+                " " + String.join(" ", commands);
 
         // Create env file
         FileUtils.createEnvFile(dateString, uuid);
@@ -148,6 +159,8 @@ public class Add implements Callable<Integer> {
         body.addProperty("timelimit", timelimit);
         body.addProperty("description", description);
         body.addProperty("requested_cpu", cpu);
+        body.addProperty("requested_mem", mem);
+        body.addProperty("partition", partition);
         body.addProperty("uuid", uuid);
         request.setBody(body.toString(), ContentType.APPLICATION_JSON);
         Global.getInstance().setCaller(Global.ActionType.ADD);

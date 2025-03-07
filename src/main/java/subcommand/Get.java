@@ -29,7 +29,7 @@ public class Get implements Callable<Integer> {
     @CommandLine.Option(
             names = {"-u", "--username"},
             paramLabel = "USERNAME",
-            description = "Get task list by username (default: current user)"
+            description = "Get task list by username (default: ALL user)"
     )
     String user;
 

@@ -27,30 +27,36 @@ public class PrintUtils {
         String responseMessage = response.getBodyText();
         Gson gson = new Gson();
         if (statusCode >= 200 && statusCode < 300) {
-            switch (Global.getInstance().getCaller()) {
-                case ADD:
-                    printlnGreen("Command registered. Returned Task ID: " + responseMessage);
-                    break;
-                case GET:
-                    List<TaskDto> taskDtoList = new ArrayList<>();
-                    JsonArray ja = JsonParser.parseString(responseMessage).getAsJsonArray();
+            try {
+                switch (Global.getInstance().getCaller()) {
+                    case ADD:
+                        printlnGreen("Command registered. Returned Task ID: " + responseMessage);
+                        break;
+                    case GET:
+                        List<TaskDto> taskDtoList = new ArrayList<>();
+                        JsonArray ja = JsonParser.parseString(responseMessage).getAsJsonArray();
 
-                    for (JsonElement je : ja) {
-                        TaskDto taskDto = gson.fromJson(je, TaskDto.class);
-                        taskDtoList.add(taskDto);
-                    }
-                    TaskPrinter taskPrinter = new TaskPrinter(taskDtoList);
-                    taskPrinter.printFilter();
-                    break;
-                case DESCRIBE:
-                    TaskDto taskDto = gson.fromJson(JsonParser.parseString(responseMessage), TaskDto.class);
-                    TaskPrinter taskDescriber = new TaskPrinter();
-                    taskDescriber.describe(taskDto);
-                    break;
-                case CANCEL: case PROMOTE:
-                    System.out.print(PrintUtils.ANSI_BOLD_GREEN+"Response from TaskManager: "+ PrintUtils.ANSI_RESET);
-                    System.out.println(responseMessage);
-                    break;
+                        for (JsonElement je : ja) {
+                            TaskDto taskDto = gson.fromJson(je, TaskDto.class);
+                            taskDtoList.add(taskDto);
+                        }
+                        TaskPrinter taskPrinter = new TaskPrinter(taskDtoList);
+                        taskPrinter.printFilter();
+                        break;
+                    case DESCRIBE:
+                        TaskDto taskDto = gson.fromJson(JsonParser.parseString(responseMessage), TaskDto.class);
+                        TaskPrinter taskDescriber = new TaskPrinter();
+                        taskDescriber.describe(taskDto);
+                        break;
+                    case CANCEL:
+                    case PROMOTE:
+                        System.out.print(PrintUtils.ANSI_BOLD_GREEN + "Response from TaskManager: " + PrintUtils.ANSI_RESET);
+                        System.out.println(responseMessage);
+                        break;
+                }
+            } catch (JsonSyntaxException e) {
+                printError("Error parsing JSON response");
+                e.printStackTrace();
             }
         } else {
             printError(responseMessage);

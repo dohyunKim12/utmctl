@@ -11,10 +11,11 @@ public class TaskDto {
     @SerializedName("id")
     private Integer taskId;
     @SerializedName("job_id")
-    private Integer jobId;
+    private String jobId;
     @SerializedName("user")
     private String username;
     private String description;
+    private String partition;
     @SerializedName("license_type")
     private String licenseType;
     @SerializedName("license_count")
@@ -28,6 +29,8 @@ public class TaskDto {
     private Long timelimit;
     @SerializedName("requested_cpu")
     private Integer cpu;
+    @SerializedName("requested_mem")
+    private Integer mem;
     private String submit;
     private String start;
     private String end;
@@ -53,13 +56,5 @@ public class TaskDto {
 
     public void setShortCmd(String shortCmd) {
         this.shortCmd = shortCmd;
-    }
-
-    public Integer getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(Integer jobId) {
-        this.jobId = jobId;
     }
 }

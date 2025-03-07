@@ -18,6 +18,7 @@ public abstract class TablePrinter {
         maxLengths.put("jobId", 5);
         maxLengths.put("username", 8);
         maxLengths.put("description", 11);
+        maxLengths.put("partition", 9);
         maxLengths.put("licenseType", 11);
         maxLengths.put("licenseCount", 12);
         maxLengths.put("license", 7);
@@ -27,6 +28,7 @@ public abstract class TablePrinter {
         maxLengths.put("shortCmd", 8);
         maxLengths.put("timelimit", 9);
         maxLengths.put("cpu", 3);
+        maxLengths.put("mem", 3);
         maxLengths.put("submit", 6);
         maxLengths.put("start", 5);
         maxLengths.put("end", 3);

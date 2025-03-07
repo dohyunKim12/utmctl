@@ -7,7 +7,6 @@ import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class PrintUtils {
     public static final String ANSI_RESET = "\u001B[0m";
@@ -48,7 +47,7 @@ public class PrintUtils {
                     TaskPrinter taskDescriber = new TaskPrinter();
                     taskDescriber.describe(taskDto);
                     break;
-                case CANCEL:
+                case CANCEL: case PROMOTE:
                     System.out.print(PrintUtils.ANSI_BOLD_GREEN+"Response from TaskManager: "+ PrintUtils.ANSI_RESET);
                     System.out.println(responseMessage);
                     break;

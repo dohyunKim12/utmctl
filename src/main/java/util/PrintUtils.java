@@ -40,7 +40,7 @@ public class PrintUtils {
                         taskDtoList.add(taskDto);
                     }
                     TaskPrinter taskPrinter = new TaskPrinter(taskDtoList);
-                    taskPrinter.print();
+                    taskPrinter.printFilter();
                     break;
                 case DESCRIBE:
                     TaskDto taskDto = gson.fromJson(JsonParser.parseString(responseMessage), TaskDto.class);
@@ -64,7 +64,7 @@ public class PrintUtils {
 
         String[] lines = json.split("\n");
         for (String line : lines) {
-            sb.append(repeatString(" ", indent)); // Java 1.8 호환 repeat 대체
+            sb.append(repeatString(" ", indent));
             String[] parts = line.split(": ");
             if (parts.length == 2) {
                 sb.append(ANSI_BOLD_PURPLE);

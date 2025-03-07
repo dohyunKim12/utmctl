@@ -109,6 +109,10 @@ public class Add implements Callable<Integer> {
             String pid = readPIDFromFile(utmdPidFilePath);
             if(!isUtmdRunning(pid)) return 1;
         }
+        if (commands.size() == 0) {
+            PrintUtils.printError("No commands to add");
+            return 1;
+        }
 
         if (timeUnit != TimeUnit.MINUTES) {
             timelimit = (int) timeUnit.toMinutes(timelimit);
@@ -143,7 +147,7 @@ public class Add implements Callable<Integer> {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
         String uuid = timestamp + "_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 
-        String command = "srun --comment='utm-" + uuid + "' -c " + cpu + " -m " + mem + " -p " + partition + " -L " + license + " -t " + timelimit +
+        String command = "srun --comment='utm-" + uuid + "' -c " + cpu + " --mem " + mem + " -p " + partition + " -L " + license + " -t " + timelimit +
                 " " + String.join(" ", commands);
 
         // Create env file
@@ -179,7 +183,7 @@ public class Add implements Callable<Integer> {
     private void validateOptions() {
         if(filePath == null && (license == null || license.isEmpty())) {
             throw new CommandLine.ParameterException(spec.commandLine(),
-                    "Error: Either '--file' (-f) must be specified or '--license' (-l) must be provided.");
+                    "Error: Either '--file' (-f) must be specified or '--license' (-L) must be provided.");
         }
     }
 

@@ -47,7 +47,7 @@ public class PrintUtils {
                     TaskPrinter taskDescriber = new TaskPrinter();
                     taskDescriber.describe(taskDto);
                     break;
-                case CANCEL:
+                case CANCEL: case PROMOTE:
                     System.out.print(PrintUtils.ANSI_BOLD_GREEN+"Response from TaskManager: "+ PrintUtils.ANSI_RESET);
                     System.out.println(responseMessage);
                     break;

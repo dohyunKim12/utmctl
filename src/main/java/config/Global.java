@@ -40,7 +40,8 @@ public class Global {
         START(4),
         END(5),
         DESCRIBE(6),
-        ADDBATCH(7);
+        ADDBATCH(7),
+        PROMOTE(8);
 
         private final int value;
         ActionType(int value) { this.value = value; }

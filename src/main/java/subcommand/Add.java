@@ -10,6 +10,7 @@ import picocli.CommandLine;
 import util.*;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -124,6 +125,7 @@ public class Add implements Callable<Integer> {
         if (filePath != null) {
             // Batch mode
             JsonArray ja = makePayloadFromFile(filePath);
+            request.setUri(URI.create(gtmServerUrl + "/api/task/add/batch"));
             request.setBody(ja.toString(), ContentType.APPLICATION_JSON);
             Global.getInstance().setCaller(Global.ActionType.ADDBATCH);
             writeChannel(request);
